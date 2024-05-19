@@ -211,7 +211,7 @@ typedef struct {
 
 static MyType add(MyType a, MyType b) {
   MyType result;
-  result.valu= a.value + b.value;
+  result.value = a.value + b.value;
   return result;
 }
 ```
@@ -363,7 +363,8 @@ Reasons:
 ## Compiling
 To compile C9 code, use the following flags:
 
-GCC:
+### GCC:
 `gcc -std=c99 -Wall -Wextra -Werror -O2 -std=c99 -pedantic test.c -o test`
-Clang:
+
+### Clang:
 `clang -std=c99 -Wall -Wextra test.c -o test`
