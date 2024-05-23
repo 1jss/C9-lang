@@ -49,6 +49,35 @@ This leaves the following keywords available in C9:
 
 _Bool, _Complex, _Imaginary
 
+## Operators
+
+- The comma operator is not allowed for inline variable declarations. Each variable must be declared on a separate line.
+
+```C
+// Not allowed
+int32_t a = 0, b = 1;
+
+// Allowed
+int32_t a = 0;
+int32_t b = 1;
+```
+
+## Operands
+- The operands of the && and || operators must be surrounded by parentheses unless they are simple variables or constants.
+
+```C
+// Not allowed
+if (a == 1 && b) {
+  return 0;
+}
+
+// Allowed
+if ((a == 1) && b) {
+  return 0;
+}
+```
+
+
 ## Types
 
 - No built in integer types are allowed as they can vary in size. Use `inttypes.h` instead.
@@ -94,8 +123,28 @@ int64_t c = 0;
 - All variables and pointers must be initiated with a value.
 
 ```C
+// Not allowed
+int32_t a;
+int32_t *pointer;
+
+// Allowed
 int32_t a = 0;
-int32_t *ptr = 0; // Yes, literal 0
+int32_t *pointer = 0;
+```
+
+- Type casting to and from pointers is not allowed
+
+```C
+// Not allowed
+int32_t a = 12345;
+int32_t b = &a;
+int32_t *pointer = (int32_t *) b;
+
+// Allowed
+int32_t a = 12345;
+int32_t b = a;
+int32_t *pointer = &b;
+
 ```
 
 ## Variables
@@ -120,8 +169,9 @@ int32_t n; // Not allowed
 ```
 
 - Names of structs, unions and enums must be unique
-- Use `const` for constants in global scope
+- Use `const` for constants in global scope (instead of `#define` macros)
 - Never use `const` in local scope (inside functions) as it lifts the variable to global scope.
+- Use global scope only for constants
 
 ```C
 const int32_t MAX = 100;
@@ -159,6 +209,39 @@ typedef struct {
 } RectangleType;
 ```
 
+- Bitfields are not allowed
+
+```C
+// Not allowed
+typedef struct {
+  int32_t width: 4;
+  int32_t height: 4;
+} RectangleType;
+
+// Allowed
+typedef struct {
+  int32_t width;
+  int32_t height;
+} RectangleType;
+
+// If storage is a concern use a bit mask instead
+```
+
+- Use title case for struct names
+
+```C
+// Discouraged
+typedef struct {
+  int32_t width;
+  int32_t height;
+} rectangleType;
+
+// Encouraged
+typedef struct {
+  int32_t width;
+  int32_t height;
+} RectangleType;
+```
 
 ## Functions
 
@@ -273,6 +356,8 @@ int32_t value = 0;
 function(value);
 ```
 
+- Function pointers are discouraged and only allowed if constants.
+
 ## Memory management
 - Prefer using the stack instead of the heap when possible.
 
@@ -359,6 +444,9 @@ Reasons:
 
 Reasons:
 - `/* */` comments are not nestable
+
+## Code style
+- Use 2 spaces for indentation. Tabs are not allowed.
 
 ## Compiling
 To compile C9 code, use the following flags:
