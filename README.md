@@ -49,35 +49,6 @@ This leaves the following keywords available in C9:
 
 _Bool, _Complex, _Imaginary
 
-## Operators
-
-- The comma operator is not allowed for inline variable declarations. Each variable must be declared on a separate line.
-
-```C
-// Not allowed
-int32_t a = 0, b = 1;
-
-// Allowed
-int32_t a = 0;
-int32_t b = 1;
-```
-
-## Operands
-- The operands of the && and || operators must be surrounded by parentheses unless they are simple variables or constants.
-
-```C
-// Not allowed
-if (a == 1 && b) {
-  return 0;
-}
-
-// Allowed
-if ((a == 1) && b) {
-  return 0;
-}
-```
-
-
 ## Types
 
 - No built in integer types are allowed as they can vary in size. Use `inttypes.h` instead.
@@ -169,11 +140,11 @@ int32_t n; // Not allowed
 ```
 
 - Names of structs, unions and enums must be unique
+- Never use `const` in local scope (inside functions)
 - Use `const` for constants in global scope (instead of `#define` macros)
-- Never use `const` in local scope (inside functions) as it lifts the variable to global scope.
-- Use global scope only for constants
 
 ```C
+// encouraged
 const int32_t MAX = 100;
 ```
 
@@ -201,15 +172,15 @@ RectangleType rectangle = { .width = 10, .height = 20 };
 - Do not use flexible array members in structs
 
 ```C
-// Not allowed
 typedef struct {
   int32_t width;
   int32_t height;
-  int32_t data[];
+  int32_t data[]; // <- Not allowed
+
 } RectangleType;
 ```
 
-- Bitfields are not allowed
+- Bitfields are not allowed. If storage is a concern use a bit mask instead.
 
 ```C
 // Not allowed
@@ -224,7 +195,6 @@ typedef struct {
   int32_t height;
 } RectangleType;
 
-// If storage is a concern use a bit mask instead
 ```
 
 - Use title case for struct names
@@ -257,8 +227,7 @@ int32_t foo(a, b)
 }
 
 // ANSI syntax allowed
-int32_t foo(int32_t a, int32_t b) 
-{ 
+int32_t foo(int32_t a, int32_t b) { 
     return 0; 
 }
 ```
@@ -452,6 +421,35 @@ Reasons:
 
 Reasons:
 - `/* */` comments are not nestable
+
+
+## Operators
+
+- The comma operator is not allowed for inline variable declarations. Each variable must be declared on a separate line.
+
+```C
+// Not allowed
+int32_t a = 0, b = 1;
+
+// Allowed
+int32_t a = 0;
+int32_t b = 1;
+```
+
+## Operands
+- The operands of the && and || operators must be surrounded by parentheses unless they are simple variables or constants.
+
+```C
+// Not allowed
+if (a == 1 && b) {
+  return 0;
+}
+
+// Allowed
+if ((a == 1) && b) {
+  return 0;
+}
+```
 
 ## Code style
 - Use 2 spaces for indentation. Tabs are not allowed.

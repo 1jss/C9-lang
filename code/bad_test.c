@@ -26,13 +26,11 @@ int b;
   return a + b;
 }
 
-int bar()
-{
+int bar() {
   return 0;
 }
 
-int main()
-{
+int main() {
   int n = 10;
   int array[n];
 

@@ -26,35 +26,31 @@ typedef struct {
 } TestStruct;
 
 // Functions (except main) are static
-static i32 add(TestStruct props)
-{
+static i32 add(TestStruct props) {
   return props.a + props.b;
 }
 
-static i32 subtract(TestStruct props)
-{
+static i32 subtract(TestStruct props) {
   return props.a - props.b;
 }
 
-static TestStruct swap(TestStruct props)
-{
+static TestStruct swap(TestStruct props) {
   i32 temp = props.a;
   props.a = props.b;
   props.b = temp;
   return props;
 }
 
-static RectangleType createRectangle(TestStruct props)
-{
+static RectangleType createRectangle(TestStruct props) {
   RectangleType rectangle = {.width = props.a, .height = props.b};
   return rectangle;
 }
 
-i32 main(void)
-{
+i32 main(void) {
   TestStruct test_struct = {
-      .a = 10,
-      .b = 20};
+    .a = 10,
+    .b = 20
+  };
 
   i32 sum = add(test_struct);
   TestStruct swapped = swap(test_struct);
