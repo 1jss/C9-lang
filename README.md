@@ -356,7 +356,15 @@ int32_t value = 0;
 function(value);
 ```
 
-- Function pointers are discouraged and only allowed if constants.
+- Function pointers are discouraged. Typedef them if used.
+
+```C
+// Discouraged
+int32_t (*function)(int32_t, int32_t);
+
+// Allowed
+typedef int32_t (*FunctionType)(int32_t, int32_t);
+```
 
 ## Memory management
 - Prefer using the stack instead of the heap when possible.
