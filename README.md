@@ -453,6 +453,7 @@ if ((a == 1) && b) {
 
 ## Code style
 - Use 2 spaces for indentation. Tabs are not allowed.
+- Clang format: `{ BasedOnStyle: Google, IndentWidth: 2, ContinuationIndentWidth: 2, ColumnLimit: 0, SpacesBeforeTrailingComments: 1, AlignAfterOpenBracket: BlockIndent }`
 
 ## Compiling
 To compile C9 code, use the following flags:
