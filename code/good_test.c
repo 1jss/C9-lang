@@ -1,10 +1,10 @@
 // This is a test file for the C9 linter to make sure it doesn't throw any errors on valid C9 code
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h> // printf
+#include <stdlib.h> 
 
 // Typedefs and print functions
-#include "c9.h"
+#include "c9.h" // i32
 
 #if 0
 This is a comment
