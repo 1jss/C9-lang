@@ -451,6 +451,21 @@ if ((a == 1) && b) {
 }
 ```
 
+## Includes
+- Include statements should be followed by a comment with the function or type that is being included. These can be tested by running the `include_check.py` script in the `code` folder.
+
+```C
+#include <stdio.h> // printf
+#include <stdlib.h> // malloc, free
+```
+
+## Linting
+- A rudimental regex linting script is available in the `code` folder. This script can be used to check for some of the rules in the C9 language.
+
+```bash
+python3 lint.py test.c
+```
+
 ## Code style
 - Use 2 spaces for indentation. Tabs are not allowed.
 - Clang format: `{ BasedOnStyle: Google, IndentWidth: 2, ContinuationIndentWidth: 2, ColumnLimit: 0, SpacesBeforeTrailingComments: 1, AlignAfterOpenBracket: BlockIndent }`
