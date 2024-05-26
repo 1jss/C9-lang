@@ -90,7 +90,8 @@ def check_functions(file_path):
   # warn for unused functions
   for function in function_definitions:
     if function not in function_usage:
-      print(f'Warning: Function {function} is not used')
+      if function != 'main':
+        print(f'Warning: Function "{function}" is not used')
 
 # Check all files passed as arguments
 for filename in sys.argv[1:]:
