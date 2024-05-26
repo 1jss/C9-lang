@@ -94,7 +94,6 @@ i32 main(void) {
     printf("\n");
   } else {
     printf("Error: %s\n", good_result.error.message);
-    printf("\n");
   }
 
   ReturnDataType bad_result = divide((TestStruct){.a = 10, .b = 0});
@@ -103,7 +102,6 @@ i32 main(void) {
     printf("\n");
   } else {
     printf("Error: %s\n", bad_result.error.message);
-    printf("\n");
   }
 
   printf("Sum: %d\n", sum);
