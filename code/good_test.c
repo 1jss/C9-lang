@@ -86,6 +86,11 @@ i32 main(void) {
   // Using compound literal as a cast
   i32 sum_again = add((TestStruct){.a = 10, .b = 20});
 
+  u8 text_data = text("Hello, world!");
+  print_text(text_data);
+  printf(" : ");
+  print_i32(text_data.len);
+  printf("\n");
   RectangleType rectangle = createRectangle(test_struct);
 
   ReturnDataType good_result = divide(test_struct);
