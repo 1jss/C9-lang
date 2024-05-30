@@ -35,7 +35,7 @@ def get_type_definitions(file_path):
 def get_type_usage(file_path):
   with open(file_path, 'r') as file:
     content = file.read()
-  variable_declarations = re.findall(r'(\w+)\s+\w+\s=\s', content)
+  variable_declarations = re.findall(r'(\w+)\s+\*?\w+\s=\s', content)
   structs = re.findall(r'typedef struct {\n(?:.+\n)+} \w+;', content)
   struct_member_lines = []
   # loop through structs and split by newline and remove first and last element of each struct. Put the remaining lines flat in struct_lines

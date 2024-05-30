@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 // Typedefs and print functions
-#include "c9.h" // i32, f32, print_f32
+#include "c9.h" // i32, f32, print_f32, text, print_i32, print_text, t8, Arena, a_open, a_fill, a_size, a_capacity, a_reset, a_close
 
 #if 0
 This is a comment
@@ -86,7 +86,7 @@ i32 main(void) {
   // Using compound literal as a cast
   i32 sum_again = add((TestStruct){.a = 10, .b = 20});
 
-  u8 text_data = text("Hello, world!");
+  t8 text_data = text("Hello, world!");
   print_text(text_data);
   printf(" : ");
   print_i32(text_data.len);
@@ -113,6 +113,27 @@ i32 main(void) {
   printf("Sum again: %d\n", sum_again);
   printf("Difference: %d\n", difference);
   printf("Rectangle width: %d, height: %d\n", rectangle.width, rectangle.height);
+
+  Arena *arena = a_open(2); // Intentionally small arena for testing growth
+  printf("Arena size: %zu\n", a_size(arena));
+  printf("Arena capacity: %zu\n", a_capacity(arena));
+
+  TestStruct *arena_data = a_fill(arena, sizeof(TestStruct));
+  if (arena_data == 0) {
+    printf("Failed to allocate memory in arena\n");
+    return 1;
+  }
+
+  *arena_data = test_struct;
+  printf("Arena size after fill: %zu\n", a_size(arena));
+  printf("Arena capacity after fill: %zu\n", a_capacity(arena));
+
+  a_reset(arena);
+  printf("Arena size after reset: %zu\n", a_size(arena));
+  printf("Arena capacity after reset: %zu\n", a_capacity(arena));
+
+
+  a_close(arena);
 
   return 0;
 }
