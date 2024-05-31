@@ -1,10 +1,10 @@
 // This is a test file for the C9 linter to make sure it doesn't throw any errors on valid C9 code
 
 #include <stdio.h> // printf
-#include <stdlib.h> // size_t
+#include <stdlib.h>
 
 // Typedefs and print functions
-#include "types.h" // i32, f32, print_f32, text, print_i32, print_text, t8
+#include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8
 #include "arena.h" // Arena, a_open, a_fill, a_size, a_capacity, a_reset, a_close
 
 #if 0
@@ -31,7 +31,7 @@ typedef enum { DATA,
 
 typedef struct {
   i32 code;
-  char *message;
+  s8 message;
 } ErrorType;
 
 typedef struct {
@@ -44,7 +44,7 @@ typedef struct {
 
 static ReturnDataType divide(TestStruct props) {
   if (props.b == 0) {
-    ErrorType error = {.code = 1, .message = "Division by zero"};
+    ErrorType error = {.code = 1, .message = str8("Division by zero")};
     ReturnDataType data = {.type = ERROR, .error = error};
     return data;
   }
@@ -87,8 +87,8 @@ i32 main(void) {
   // Using compound literal as a cast
   i32 sum_again = add((TestStruct){.a = 10, .b = 20});
 
-  t8 text_data = text("Hello, world!");
-  print_text(text_data);
+  s8 text_data = str8("Hello, world!");
+  print_s8(text_data);
   printf(" : ");
   print_i32(text_data.len);
   printf("\n");
@@ -99,7 +99,9 @@ i32 main(void) {
     print_f32(good_result.result);
     printf("\n");
   } else {
-    printf("Error: %s\n", good_result.error.message);
+    printf("Error: ");
+    print_s8(good_result.error.message);
+    printf("\n");
   }
 
   ReturnDataType bad_result = divide((TestStruct){.a = 10, .b = 0});
@@ -107,7 +109,9 @@ i32 main(void) {
     print_f32(bad_result.result);
     printf("\n");
   } else {
-    printf("Error: %s\n", bad_result.error.message);
+    printf("Error: ");
+    print_s8(bad_result.error.message);
+    printf("\n");
   }
 
   printf("Sum: %d\n", sum);

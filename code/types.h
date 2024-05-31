@@ -13,14 +13,14 @@ typedef double f64;
 typedef struct {
   uint8_t *data;
   size_t len;
-} t8;
+} s8;
 
-t8 text(char *s) {
+s8 str8(char *s) {
   uint32_t len = 0;
   while (s[len] != '\0') {
     len++;
   }
-  return (t8){(uint8_t *)s, len};
+  return (s8){(uint8_t *)s, len};
 }
 
 void print_i32(i32 value) { printf("%" PRId32, value); }
@@ -31,7 +31,7 @@ void print_f32(f32 value) { printf("%f", value); }
 void print_f64(f64 value) { printf("%f", value); }
 void print_bool(bool value) { printf("%d", value); }
 void print_string(char *value) { printf("%s", value); }
-void print_text(t8 value) {
+void print_s8(s8 value) {
   for (size_t i = 0; i < value.len; i++) {
     printf("%c", value.data[i]);
   }
