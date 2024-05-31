@@ -9,7 +9,6 @@ All C99 keywords are reserved in C9, but many are not allowed.
 
 Some keywords are only allowed in specific contexts:
 - `break` is not allowed outside of switch statements
-- `goto` is not allowed except for error handling inside functions
 - `const` is not allowed in local scope (inside functions)
 
 ANSI C keywords:
@@ -19,7 +18,7 @@ ANSI C keywords:
 | ~~auto~~     | _break_      | case         | ~~char~~   |
 | _const_      | ~~continue~~ | default      | ~~do~~     |
 | double       | else         | enum         | ~~extern~~ |
-| float        | for          | _goto_       | if         |
+| float        | for          | ~~goto~~     | if         |
 | ~~int~~      | ~~long~~     | ~~register~~ | return     |
 | ~~short~~    | ~~signed~~   | sizeof       | static     |
 | struct       | switch       | typedef      | union      |
@@ -43,9 +42,9 @@ This leaves the following keywords available in C9:
 | ------- | -------- | ---------- | -------- |
 | _break_ | case     | _const_    | double   |
 | else    | enum     | float      | for      |
-| _goto_  | if       | return     | sizeof   |
-| static  | struct   | switch     | typedef  |
-| union   | void     | while      |          |
+| if      | return   | sizeof     | static   |
+| struct  | switch   | typedef    | union    |
+| void    | while    |            |          |
 
 _Bool, _Complex, _Imaginary
 
