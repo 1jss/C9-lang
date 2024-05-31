@@ -1,5 +1,5 @@
-#include <inttypes.h>
-#include <stdlib.h>
+#include <inttypes.h> // uint8_t, int32_t, int64_t, uint32_t, uint64_t
+#include <stdlib.h>   // malloc, free, size_t
 
 // Simple arena allocator that has the following functions:
 // - a_open: initializes the arena and returns a pointer to it
