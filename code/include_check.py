@@ -21,7 +21,8 @@ def get_function_usage(file_path):
   with open(file_path, 'r') as file:
     content = file.read()
   function_usage = re.findall(r'(\w+\s*)\(.+\);', content)
-  return function_usage
+  internal_function_usage = re.findall(r'[\( ]+(\w+)\([\w]+\).*\);', content)
+  return function_usage + internal_function_usage
 
 # extract C typedef struct and enum definition names
 def get_type_definitions(file_path):
@@ -47,15 +48,15 @@ def get_type_usage(file_path):
     struct_member_types += re.findall(r'\s+(\w+)\s+\w+;', struct_member_line)
   function_return_types = re.findall(r'static\s+(\w+)\s+\w+\(.+\)', content)
   function_arguments = re.findall(r'\w+\s+\w+\((?:(\w+)\s+\w+\,*\s*)+\)', content)
-  all_types = variable_declarations + struct_member_types + function_return_types + function_arguments
-  unique_types = list(set(all_types))
-  return unique_types
+  return variable_declarations + struct_member_types + function_return_types + function_arguments
 
 def check_functions(file_path):
   import_comments = get_import_comments(file_path)
   print(f'  Included in comments: {import_comments}')
 
+  builtin_functions = ["sizeof"]
   function_definitions = get_function_definitions(file_path)
+  function_definitions = list(set(function_definitions))
   print(f'  Function definitions: {function_definitions}')
 
   function_usage = get_function_usage(file_path)
@@ -65,16 +66,17 @@ def check_functions(file_path):
   typedef_definitions = get_type_definitions(file_path)
   print(f'  Type definitions: {typedef_definitions}')
 
+  builtin_types = ['float', 'double']
   type_usage = get_type_usage(file_path)
   type_usage = list(set(type_usage))
   print(f'    Type usage: {type_usage}')
 
   for function_name in function_usage:
-    if function_name not in function_definitions and function_name not in import_comments:
+    if function_name not in function_definitions and function_name not in import_comments and function_name not in builtin_functions:
       print(f'Warning: Function {function_name} is not defined or mentioned in #include comments')
 
   for type_name in type_usage:
-    if type_name not in typedef_definitions and type_name not in import_comments:
+    if type_name not in typedef_definitions and type_name not in import_comments and type_name not in builtin_types:
       print(f'Warning: Type {type_name} is not defined or mentioned in #include comments')
 
   # warn for unused import comments
