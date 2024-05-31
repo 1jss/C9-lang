@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 // Typedefs and print functions
-#include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8
 #include "arena.h" // Arena, a_open, a_fill, a_size, a_capacity, a_reset, a_close
+#include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8
 
 #if 0
 This is a comment

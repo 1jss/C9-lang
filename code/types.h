@@ -1,7 +1,7 @@
 #include <inttypes.h> // uint8_t, int32_t, int64_t, uint32_t, uint64_t
-#include <stdbool.h> // bool
-#include <stddef.h> // size_t
-#include <stdio.h> // printf
+#include <stdbool.h>  // bool
+#include <stddef.h>   // size_t
+#include <stdio.h>    // printf
 
 typedef int32_t i32;
 typedef int64_t i64;
