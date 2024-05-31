@@ -71,12 +71,19 @@ Arena *a_open(size_t size) {
 
 // a_fill: allocates memory in the arena and returns a pointer to it
 void *a_fill(Arena *arena, size_t size) {
+  // If size is larger than 4, align to 8 bytes
+  int8_t align_to = size > 4 ? 8 : 4;
+  size_t aligned_head = arena->head;
+  if (aligned_head % align_to != 0) {
+    aligned_head = aligned_head + align_to - (aligned_head % align_to);
+  }
+
   // If the size is 0 or bigger than the maximum arena size, return 0
   if (size == 0 || size > MAX_ARENA_SIZE) {
     return 0;
   }
   // If the current arena is full, use the next or create a new one
-  if (arena->head + size > arena->capacity) {
+  if (aligned_head + size > arena->capacity) {
     if (arena->next == 0) {
       // Cap the arena size at MAX_ARENA_SIZE
       if (arena->capacity * 2 > MAX_ARENA_SIZE) {
@@ -87,15 +94,9 @@ void *a_fill(Arena *arena, size_t size) {
     }
     return a_fill(arena->next, size);
   }
-  // Point to the start of the current memory block and move the head
-  void *ptr = arena->data + arena->head;
-  arena->head += size;
-  // Align the head to the next multiple of 8
-  size_t align = 8 - (arena->head % 8);
-  if (align < 8) {
-    arena->head += align;
-  }
-  
+  // Point to the start of the aligned memory block and move the head
+  void *ptr = arena->data + aligned_head;
+  arena->head = aligned_head + size;
   return ptr;
 }
 
