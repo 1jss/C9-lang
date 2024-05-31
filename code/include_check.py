@@ -30,7 +30,8 @@ def get_type_definitions(file_path):
     content = file.read()
   struct_definitions = re.findall(r'typedef struct {(?:\s+.+\s)+} (\w+);', content)
   enum_definitions = re.findall(r'typedef enum {(?:\s+\w+.+)+} (\w+);', content)
-  return struct_definitions + enum_definitions
+  simple_typedefs = re.findall(r'typedef \w+ (\w+);', content)
+  return struct_definitions + enum_definitions + simple_typedefs
 
 # extract type usage such as variable declarations, function return types and function arguments
 def get_type_usage(file_path):
@@ -45,10 +46,12 @@ def get_type_usage(file_path):
   struct_member_types = []
   # Loop through the struct member lines and extract the type of each member and put in struct_member_types
   for struct_member_line in struct_member_lines:
-    struct_member_types += re.findall(r'\s+(\w+)\s+\w+;', struct_member_line)
+    struct_member_types += re.findall(r'\s+(\w+)\s+\*?\w+;', struct_member_line)
   function_return_types = re.findall(r'static\s+(\w+)\s+\w+\(.+\)', content)
   function_arguments = re.findall(r'\w+\s+\w+\((?:(\w+)\s+\w+\,*\s*)+\)', content)
-  return variable_declarations + struct_member_types + function_return_types + function_arguments
+  simple_typedefs = re.findall(r'typedef (\w+) \w+;', content)
+
+  return variable_declarations + struct_member_types + function_return_types + function_arguments + simple_typedefs
 
 def check_functions(file_path):
   import_comments = get_import_comments(file_path)
