@@ -5,7 +5,7 @@ import sys
 def get_import_comments(file_path):
   with open(file_path, 'r') as file:
     content = file.read()
-  includes = re.findall(r'#include [<"].*[>"] \/\/ (.*)', content)
+  includes = re.findall(r'#include [<"].*[>"]\ +\/\/ (.*)', content)
   includes = [word for comment in includes for word in comment.split(', ')]
   return includes
 
@@ -13,7 +13,7 @@ def get_import_comments(file_path):
 def get_function_definitions(file_path):
   with open(file_path, 'r') as file:
     content = file.read()
-  function_definitions = re.findall(r'\w+\s+(\w+\s*)\(.+\)\s*{', content)
+  function_definitions = re.findall(r'\w+\s+\*?(\w+)\(.+\)\s*{', content)
   return function_definitions
 
 # extract C function usage
