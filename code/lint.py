@@ -16,16 +16,17 @@ def lint(filename):
             # This rule is difficult to enforce with a regex as it requires context-sensitive parsing.
             # We will skip this rule for now.
 
-            # Rule: 'goto' is not allowed except for error handling inside functions
-            # This rule is also difficult to enforce with a regex as it requires context-sensitive parsing.
-            # We will skip this rule for now.
+            # Rule: 'goto' is not allowed at all
+            if re.search(r'\ goto\ ', line):
+                print(f'{filename}:{line_num}: Warning: Found goto')
 
             # Rule: 'const' is not allowed in local scope (inside functions)
-            # This rule is also difficult to enforce with a regex as it requires context-sensitive parsing.
-            # We will skip this rule for now.
+            # If const is preceded by more than one space it is probably not in global scope
+            if re.search(r'\ +\ +const\ ', line):
+                print(f'{filename}:{line_num}: Warning: Found const in local scope')  
 
             # Rule: No built in integer types are allowed as they can vary in size. Use `inttypes.h` instead.
-            if re.search(r'\b(int|short|long)\b', line):
+            if re.search(r'\ (int|short|long)\ ', line):
                 print(f'{filename}:{line_num}: Warning: Found built-in integer type')
 
             # Rule: Implicit ints are not used nor allowed.
@@ -33,16 +34,16 @@ def lint(filename):
             # We will skip this rule for now.
 
             # Rule: The long and short keywords are not allowed as they can vary in size between systems.
-            if re.search(r'\b(long|short)\b', line):
+            if re.search(r'\ (long|short)\ ', line):
                 print(f'{filename}:{line_num}: Warning: Found long or short keyword')
 
             # Rule: All variables and pointers must be initiated with a value.
-            if re.search(r'(\bint32_t\b|\bint32_t\s*\*).*(;|$)', line):
-                print(f'{filename}:{line_num}: Warning: Found variable or pointer without initial value')
+            # We will skip this rule for now.
 
             # Rule: Prefer using long variable names and avoid abbreviations
-            # This rule is subjective and depends on the specific abbreviations used in your codebase.
-            # We will skip this rule for now.
+            # Check for variable names that are less than 3 characters long
+            if re.search(r'\ \w{1,2}\ =\ ', line):
+                print(f'{filename}:{line_num}: Warning: Found short variable name')
 
             # Rule: Tentative definitions are not allowed
             # This rule is difficult to enforce with a regex as it requires context-sensitive parsing.
@@ -56,12 +57,8 @@ def lint(filename):
             # This rule is difficult to enforce with a regex as it requires context-sensitive parsing.
             # We will skip this rule for now.
 
-            # Rule: Never use `const` in local scope (inside functions) as it lifts the variable to global scope.
-            # This rule is difficult to enforce with a regex as it requires context-sensitive parsing.
-            # We will skip this rule for now.
-
             # Rule: All structs are typedefs
-            if re.search(r'struct\s+\w+\s*\{', line):
+            if re.search(r'[^(typedef )]struct\s+\w+\s*\{', line):
                 print(f'{filename}:{line_num}: Warning: Found struct without typedef')
 
             # Rule: Do not use flexible array members in structs
