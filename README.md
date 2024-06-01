@@ -281,13 +281,15 @@ static int32_t add(int32_t a, int32_t b) {
 - Prefer passing variables by value instead of reference
 
 ```C
-typedef struct {
-  int32_t value;
-} MyType;
+// Discouraged
+static void add(int32_t *a, int32_t *b) {
+  int32_t result = *a + *b;
+  return result;
+}
 
-static MyType add(MyType a, MyType b) {
-  MyType result;
-  result.value = a.value + b.value;
+// Encouraged
+static int32_t add(int32_t a, int32_t b) {
+  int32_t result = a + b;
   return result;
 }
 ```
@@ -306,7 +308,7 @@ static int32_t add(int32_t a, int32_t b) {
 }
 ```
 
-- In case of arrays - return the result inside a struct.
+- If you need to return an array - do it inside a struct.
 
 ```C
 typedef struct {
@@ -371,7 +373,24 @@ free(array);
 int32_t array[10];
 ```
 
-- Using `malloc` and `free` is allowed but discouraged.
+- Using `malloc` and `free` is allowed but discouraged. Use C9's arena allocator (`arena.h`) or your own custom allocator instead.
+
+```C
+// Discouraged
+int32_t *heap_value = malloc(sizeof(int32_t));
+int32_t *other_heap_value = malloc(sizeof(int32_t));
+free(heap_value);
+free(other_heap_value);
+
+// Encouraged
+#import "arena.h"
+Arena *arena_name = a_open(1024);
+int32_t *heap_value = a_fill(arena_name, sizeof(int32_t));
+int32_t *other_heap_value = a_fill(arena_name, sizeof(int32_t));
+a_close(arena_name);
+
+```
+
 
 - Freeing in the same scope as the allocation is mandatory.
 
@@ -388,8 +407,6 @@ free(array);
 int32_t *array = malloc(10 * sizeof(int32_t));
 free(array);
 ```
-
-- Consider using an arena allocator instead of malloc and free
 
 ## Preprocessor
 
