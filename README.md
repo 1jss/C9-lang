@@ -34,7 +34,7 @@ C99 keywords:
 | _Imaginary |              |
 
 
-As C9 is guaranteed to be C99 compliant, any keywords from newer C standards are not allowed.
+As C9 is guaranteed to be C99 compliant, but any keywords from newer C standards are also reserved and not allowed.
 
 This leaves the following keywords available in C9:
 
@@ -50,14 +50,19 @@ _Bool, _Complex, _Imaginary
 
 ## Types
 
-- No built in integer types are allowed as they can vary in size. Use `inttypes.h` instead.
+- No built in integer types are allowed as they can vary in size. Use `inttypes.h` or C9's `types.h` instead.
 
 ```C
 // Not allowed
 int a = 0;
 
 // Allowed
+#import <inttypes.h>
 int32_t a = 0;
+
+// Allowed
+#import "types.h"
+u32 a = 0;
 ```
 
 - Implicit ints are not used nor allowed.
@@ -128,6 +133,7 @@ int32_t pc;
 int32_t procCnt;
 
 // Encouraged
+int32_t process_count;
 int32_t processCount;
 ```
 
@@ -138,14 +144,33 @@ int32_t n;
 int32_t n; // Not allowed
 ```
 
-- Names of structs, unions and enums must be unique
-- Never use `const` in local scope (inside functions)
 - Use `const` for constants in global scope (instead of `#define` macros)
 
 ```C
-// encouraged
+// Not allowed
+#define MAX 100
+
+// Allowed
 const int32_t MAX = 100;
 ```
+
+- Never use `const` in local scope (inside functions)
+
+```C
+// Not allowed
+int32_t getA(void) {
+  const int32_t A = 0;
+  return A;
+}
+
+// Allowed
+const int32_t A = 0;
+int32_t getA(void) {
+  return A;
+}
+```
+
+- Names of structs, unions and enums must be unique
 
 ## Structs
 
@@ -189,11 +214,11 @@ typedef struct {
 } RectangleType;
 
 // Allowed
+const int32_t WIDTH_MASK = 0b00001111;
+const int32_t HEIGHT_MASK = 0b11110000;
 typedef struct {
-  int32_t width;
-  int32_t height;
+  int32_t dimensions;
 } RectangleType;
-
 ```
 
 - Use title case for struct names
