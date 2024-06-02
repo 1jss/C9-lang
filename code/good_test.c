@@ -3,6 +3,7 @@
 #include <stdio.h> // printf
 
 #include "arena.h" // Arena, a_open, a_fill, a_size, a_capacity, a_reset, a_close
+#include "array.h" // Array, array_create, array_destroy, array_push, array_pop, array_get, array_set, array_length, array_map
 #include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8
 
 #if 0
@@ -142,6 +143,46 @@ i32 main(void) {
   printf("Arena capacity after reset: %zu\n", a_capacity(arena));
 
   a_close(arena);
+
+  // test the array functions
+  Array array = array_create();
+
+  i32 a = 10;
+  i32 b = 20;
+  i32 c = 30;
+
+  for (i32 i = 0; i < 10; i++) {
+    array_push(&array, &a, sizeof(i32));
+    array_push(&array, &b, sizeof(i32));
+    array_push(&array, &c, sizeof(i32));
+  }
+
+  printf("Array length: %zu\n", array_length(&array));
+
+  // set value at index 5
+  i32 d = 40;
+  array_set(&array, 4, &d);
+
+  // find item with value 40
+  size_t index = 0;
+  bool found = false;
+  while (index < array_length(&array) && !found) {
+    i32 *value = (i32 *)array_get(&array, index);
+    if (value != 0 && *value == 40) {
+      printf("Found value 40 at index: %zu\n", index);
+      found = true;
+    }
+    index++;
+  }
+  
+  for (i32 i = 0; i < 5; i++) {
+    i32 *value = (i32 *)array_pop(&array);
+    printf("Popped value: %d\n", *value);
+  }
+
+  printf("Array length after pop: %zu\n", array_length(&array));
+
+  array_destroy(&array);
 
   return 0;
 }
