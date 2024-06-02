@@ -433,6 +433,16 @@ free(array);
 
 ```
 
+- Define macros are only allowed for include guards
+
+```C
+// Allowed
+#ifndef FILENAME_H
+...
+#define FILENAME_H
+#endif
+```
+
 Reasons:
 - Macros makes the code harder to read and understand
 - Macros are hard to debug
@@ -496,7 +506,7 @@ if ((a == 1) && b) {
 - Include statements should be followed by a comment with the function or type that is being included. These can be tested by running the `include_check.py` script in the `code` folder.
 
 ```C
-#include <stdio.h> // printf
+#include <stdio.h>  // printf
 #include <stdlib.h> // malloc, free
 ```
 

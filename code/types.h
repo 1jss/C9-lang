@@ -1,3 +1,5 @@
+#ifndef C9_TYPES
+
 #include <inttypes.h> // uint8_t, int32_t, int64_t, uint32_t, uint64_t
 #include <stdbool.h>  // bool
 #include <stddef.h>   // size_t
@@ -36,3 +38,6 @@ void print_s8(s8 value) {
     printf("%c", value.data[i]);
   }
 }
+
+#define C9_TYPES
+#endif

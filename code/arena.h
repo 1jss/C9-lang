@@ -1,3 +1,5 @@
+#ifndef C9_ARENA
+
 #include <inttypes.h> // uint8_t, int32_t, int64_t, uint32_t, uint64_t
 #include <stdlib.h>   // malloc, free, size_t
 
@@ -96,3 +98,6 @@ size_t a_capacity(Arena *arena) {
   }
   return arena->capacity + a_capacity(arena->next);
 }
+
+#define C9_ARENA
+#endif

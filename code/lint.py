@@ -94,7 +94,7 @@ def lint(filename):
             # We will skip this rule for now.
 
             # Rule: Preprocessor is only used for includes and conditionals
-            if re.search(r'^\s*#\s*(define|undef|ifdef|ifndef|else|elif|error|pragma)', line):
+            if re.search(r'^\s*#\s*(undef|ifdef|else|elif|error|pragma)', line):
                 print(f'{filename}:{line_num}: Warning: Found use of preprocessor directive')
 
             # Rule: No macros, object-like or functional-like are allowed
