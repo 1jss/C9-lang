@@ -159,9 +159,9 @@ i32 main(void) {
 
   printf("Array length: %zu\n", array_length(&array));
 
-  // set value at index 5
+  // set value at last index
   i32 d = 40;
-  array_set(&array, 4, &d);
+  array_set(&array, array_length(&array) - 1, &d);
 
   // find item with value 40
   size_t index = 0;
@@ -174,10 +174,17 @@ i32 main(void) {
     }
     index++;
   }
-  
+
+  for (i32 i = 0; i < 5; i++) {
+    i32 *value = (i32 *)array_shift(&array);
+    printf("Shifted value: %d\n", *value);
+  }
+
+  printf("Array length after shift: %zu\n", array_length(&array));
+
   for (i32 i = 0; i < 5; i++) {
     i32 *value = (i32 *)array_pop(&array);
-    printf("Popped value: %d\n", *value);
+    printf("Poped value: %d\n", *value);
   }
 
   printf("Array length after pop: %zu\n", array_length(&array));
