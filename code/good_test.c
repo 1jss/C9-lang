@@ -1,10 +1,10 @@
 // This is a test file for the C9 linter to make sure it doesn't throw any errors on valid C9 code
 
-#include <stdio.h> // printf
+#include <stdio.h> // printf, size_t
 
 #include "arena.h" // Arena, a_open, a_fill, a_size, a_capacity, a_reset, a_close
-#include "array.h" // Array, array_create, array_destroy, array_push, array_pop, array_get, array_set, array_length, array_map
-#include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8
+#include "array.h" // Array, array_create, array_destroy, array_push, array_shift, array_pop, array_get, array_set, array_length
+#include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8, bool
 
 #if 0
 This is a comment
@@ -151,7 +151,7 @@ i32 main(void) {
   i32 b = 20;
   i32 c = 30;
 
-  for (i32 i = 0; i < 10; i++) {
+  for (i32 i = 0; i < 5; i++) {
     array_push(&array, &a, sizeof(i32));
     array_push(&array, &b, sizeof(i32));
     array_push(&array, &c, sizeof(i32));
@@ -182,12 +182,19 @@ i32 main(void) {
 
   printf("Array length after shift: %zu\n", array_length(&array));
 
-  for (i32 i = 0; i < 5; i++) {
+
+  for (i32 i = 0; i < 10; i++) {
     i32 *value = (i32 *)array_pop(&array);
     printf("Poped value: %d\n", *value);
   }
 
   printf("Array length after pop: %zu\n", array_length(&array));
+
+  // Push some more values
+  array_push(&array, &a, sizeof(i32));
+  array_push(&array, &b, sizeof(i32));
+
+  printf("Array length after push: %zu\n", array_length(&array));
 
   array_destroy(&array);
 

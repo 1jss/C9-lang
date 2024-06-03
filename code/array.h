@@ -3,7 +3,7 @@
 #include <stdlib.h> // size_t
 #include <string.h> // memcpy
 
-#include "arena.h" // Arena, a_open, a_fill, a_reset, a_close
+#include "arena.h" // Arena, a_open, a_fill, a_close
 
 // Simple dynamic array implementation that has the following functions:
 // - array_create: initializes the array and returns a pointer to it
@@ -83,11 +83,8 @@ void *index_get(IndexNode *indexNode, size_t index) {
   }
 }
 
-// Refill the index based on the items in the linked list
+// Refill the entire index based on the items in the linked list
 void index_recreate(Array *array) {
-  if (array->index == 0) {
-    array->index = index_create(array->arena);
-  }
   ArrayItem *item = array->items;
   size_t index = 0;
   while (item != 0) {
@@ -98,11 +95,11 @@ void index_recreate(Array *array) {
 }
 
 // Create a new array and return it
-Array array_create() {
+Array array_create(void) {
   Array array;
   array.arena = a_open(1024);
   array.items = 0;
-  array.index = 0;
+  array.index = index_create(array.arena);
   array.length = 0;
   return array;
 }
@@ -115,7 +112,7 @@ void array_destroy(Array *array) {
   a_close(array->arena);
 }
 
-// Copy data onto the arena and add it to the array
+// Copy data onto the array and add it to the last position
 void array_push(Array *array, void *data, size_t data_size) {
   void *data_copy = a_fill(array->arena, data_size);
   memcpy(data_copy, data, data_size);
@@ -132,35 +129,35 @@ void array_push(Array *array, void *data, size_t data_size) {
       lastItem->next = item;
     }
   }
+  // Add the item to the index
+  index_set(array->arena, array->index, array->length, item);
   array->length += 1;
-  index_recreate(array);
 }
 
-// Get the last item and remove it from the list
+// Get the data from the last item and remove it from the array
 void *array_pop(Array *array) {
   if (array->length == 0) {
     return 0;
   }
-  // If there is only one item, remove it and recreate the index
-  else if (array->length == 1) {
-    void *data = array->items->data;
+  void *data = 0;
+  // If there is only one item
+  if (array->length == 1) {
+    data = array->items->data;
     array->items = 0;
-    array->length -= 1;
-    index_recreate(array);
-    return data;
   } else {
     // Get the last item and the second to last item
     ArrayItem *lastItem = index_get(array->index, array->length - 1);
-    void *data = lastItem->data;
+    data = lastItem->data;
     ArrayItem *newLastItem = index_get(array->index, array->length - 2);
     newLastItem->next = 0;
-    array->length -= 1;
-    index_recreate(array);
-    return data;
   }
+  // Remove the popped item from the index
+  array->length -= 1;
+  index_set(array->arena, array->index, array->length, 0);
+  return data;
 }
 
-// Get the first from the last item and remove it from the list
+// Get the data from the first item and remove it from the array
 void *array_shift(Array *array) {
   if (array->length == 0) {
     return 0;
@@ -169,6 +166,7 @@ void *array_shift(Array *array) {
   void *data = item->data;
   array->items = item->next;
   array->length -= 1;
+  // Shifts the entire index tree by one
   index_recreate(array);
   return data;
 }

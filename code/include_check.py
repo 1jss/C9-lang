@@ -21,7 +21,7 @@ def get_function_usage(file_path):
   with open(file_path, 'r') as file:
     content = file.read()
   function_usage = re.findall(r'(\w+\s*)\(.+\);', content)
-  internal_function_usage = re.findall(r'[\( ]+(\w+)\([\w]+\).*\);', content)
+  internal_function_usage = re.findall(r'[\( ]+(\w+)\(\&?[\w]+\).*\);', content)
   return function_usage + internal_function_usage
 
 # extract C typedef struct and enum definition names
@@ -69,7 +69,7 @@ def check_functions(file_path):
   typedef_definitions = get_type_definitions(file_path)
   print(f'  Type definitions: {typedef_definitions}')
 
-  builtin_types = ['float', 'double']
+  builtin_types = ['float', 'double', 'void' ]
   type_usage = get_type_usage(file_path)
   type_usage = list(set(type_usage))
   print(f'    Type usage: {type_usage}')
