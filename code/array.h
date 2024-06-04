@@ -96,13 +96,13 @@ void index_recreate(Array *array) {
   }
 }
 
-// Create a new array and return it
-Array array_create(Arena *arena) {
-  Array array;
-  array.arena = arena;
-  array.items = 0;
-  array.index = index_create(arena);
-  array.length = 0;
+// Create a new array and return a pointer to it
+Array *array_create(Arena *arena) {
+  Array *array = (Array *)a_fill(arena, sizeof(Array));
+  array->arena = arena;
+  array->items = 0;
+  array->index = index_create(arena);
+  array->length = 0;
   return array;
 }
 

@@ -147,29 +147,29 @@ i32 main(void) {
   // test the array functions
 
   Arena *array_arena = a_open(1024);
-  Array array = array_create(array_arena);
+  Array *array = array_create(array_arena);
 
   i32 a = 10;
   i32 b = 20;
   i32 c = 30;
 
   for (i32 i = 0; i < 5; i++) {
-    array_push(&array, &a, sizeof(i32));
-    array_push(&array, &b, sizeof(i32));
-    array_push(&array, &c, sizeof(i32));
+    array_push(array, &a, sizeof(i32));
+    array_push(array, &b, sizeof(i32));
+    array_push(array, &c, sizeof(i32));
   }
 
-  printf("Array length: %zu\n", array_length(&array));
+  printf("Array length: %zu\n", array_length(array));
 
   // set value at last index
   i32 d = 40;
-  array_set(&array, array_length(&array) - 1, &d);
+  array_set(array, array_length(array) - 1, &d);
 
   // find item with value 40
   size_t index = 0;
   bool found = false;
-  while (index < array_length(&array) && !found) {
-    i32 *value = (i32 *)array_get(&array, index);
+  while (index < array_length(array) && !found) {
+    i32 *value = (i32 *)array_get(array, index);
     if (value != 0 && *value == 40) {
       printf("Found value 40 at index: %zu\n", index);
       found = true;
@@ -178,28 +178,28 @@ i32 main(void) {
   }
 
   for (i32 i = 0; i < 5; i++) {
-    i32 *value = (i32 *)array_shift(&array);
+    i32 *value = (i32 *)array_shift(array);
     printf("Shifted value: %d\n", *value);
   }
 
-  printf("Array length after shift: %zu\n", array_length(&array));
+  printf("Array length after shift: %zu\n", array_length(array));
 
 
   for (i32 i = 0; i < 10; i++) {
-    i32 *value = (i32 *)array_pop(&array);
+    i32 *value = (i32 *)array_pop(array);
     printf("Poped value: %d\n", *value);
   }
 
-  printf("Array length after pop: %zu\n", array_length(&array));
+  printf("Array length after pop: %zu\n", array_length(array));
 
   // Push some more values
-  array_push(&array, &a, sizeof(i32));
-  array_push(&array, &b, sizeof(i32));
+  array_push(array, &a, sizeof(i32));
+  array_push(array, &b, sizeof(i32));
 
-  printf("Array length after push: %zu\n", array_length(&array));
+  printf("Array length after push: %zu\n", array_length(array));
 
-  printf("Array storage: %zu\n", a_size(array_arena));
-  printf("Array capacity: %zu\n", a_capacity(array_arena));
+  printf("Array arena storage: %zu\n", a_size(array_arena));
+  printf("Array arena capacity: %zu\n", a_capacity(array_arena));
 
   a_close(array_arena);
 
