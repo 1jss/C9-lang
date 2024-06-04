@@ -14,6 +14,8 @@
 // - array_set: sets the element at the given index
 // - array_length: returns the used size of the array
 
+const size_t INDEX_WIDTH = 10;
+
 typedef struct ArrayItem {
   void *data;
   struct ArrayItem *next;
@@ -21,7 +23,7 @@ typedef struct ArrayItem {
 
 typedef struct IndexNode IndexNode;
 struct IndexNode {
-  IndexNode *children[10];
+  IndexNode *children[INDEX_WIDTH];
   ArrayItem *item;
 };
 
@@ -35,7 +37,7 @@ typedef struct {
 // Create a new index node and return it
 IndexNode *index_create(Arena *arena) {
   IndexNode *index = (IndexNode *)a_fill(arena, sizeof(IndexNode));
-  for (size_t i = 0; i < 10; i++) {
+  for (size_t i = 0; i < INDEX_WIDTH; i++) {
     index->children[i] = 0;
   }
   index->item = 0;
@@ -55,8 +57,8 @@ void index_set(Arena *arena, IndexNode *indexNode, size_t index, void *item) {
   }
   // Otherwise we need to go deeper into the tree
   else {
-    size_t digit = index % 10;
-    size_t next_index = index / 10;
+    size_t digit = index % INDEX_WIDTH;
+    size_t next_index = index / INDEX_WIDTH;
     // If the child node does not exist, create it
     if (indexNode->children[digit] == 0) {
       indexNode->children[digit] = index_create(arena);
@@ -77,8 +79,8 @@ void *index_get(IndexNode *indexNode, size_t index) {
   }
   // Otherwise we need to go deeper
   else {
-    size_t digit = index % 10;
-    size_t next_index = index / 10;
+    size_t digit = index % INDEX_WIDTH;
+    size_t next_index = index / INDEX_WIDTH;
     return index_get(indexNode->children[digit], next_index);
   }
 }
@@ -95,21 +97,13 @@ void index_recreate(Array *array) {
 }
 
 // Create a new array and return it
-Array array_create(void) {
+Array array_create(Arena *arena) {
   Array array;
-  array.arena = a_open(1024);
+  array.arena = arena;
   array.items = 0;
-  array.index = index_create(array.arena);
+  array.index = index_create(arena);
   array.length = 0;
   return array;
-}
-
-// Free all memory in the array
-void array_destroy(Array *array) {
-  array->length = 0;
-  array->index = 0;
-  array->items = 0;
-  a_close(array->arena);
 }
 
 // Copy data onto the array and add it to the last position

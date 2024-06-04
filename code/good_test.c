@@ -3,7 +3,7 @@
 #include <stdio.h> // printf, size_t
 
 #include "arena.h" // Arena, a_open, a_fill, a_size, a_capacity, a_reset, a_close
-#include "array.h" // Array, array_create, array_destroy, array_push, array_shift, array_pop, array_get, array_set, array_length
+#include "array.h" // Array, array_create, array_push, array_shift, array_pop, array_get, array_set, array_length
 #include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8, bool
 
 #if 0
@@ -140,12 +140,14 @@ i32 main(void) {
 
   a_reset(arena);
   printf("Arena size after reset: %zu\n", a_size(arena));
-  printf("Arena capacity after reset: %zu\n", a_capacity(arena));
+  printf("Arena capacity after reset: %zu\n\n", a_capacity(arena));
 
   a_close(arena);
 
   // test the array functions
-  Array array = array_create();
+
+  Arena *array_arena = a_open(1024);
+  Array array = array_create(array_arena);
 
   i32 a = 10;
   i32 b = 20;
@@ -196,7 +198,10 @@ i32 main(void) {
 
   printf("Array length after push: %zu\n", array_length(&array));
 
-  array_destroy(&array);
+  printf("Array storage: %zu\n", a_size(array_arena));
+  printf("Array capacity: %zu\n", a_capacity(array_arena));
+
+  a_close(array_arena);
 
   return 0;
 }
