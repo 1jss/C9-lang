@@ -5,7 +5,7 @@
 
 #include "arena.h" // Arena, a_open, a_fill, a_close
 
-// Simple dynamic array implementation that has the following functions:
+// Dynamic array implementation that has the following functions:
 // - array_create: initializes the array and returns a pointer to it
 // - array_destroy: frees all memory in the array
 // - array_push: adds an element to the array
@@ -14,7 +14,7 @@
 // - array_set: sets the element at the given index
 // - array_length: returns the used size of the array
 
-const size_t INDEX_WIDTH = 10;
+const size_t INDEX_WIDTH = 16;
 
 typedef struct ArrayItem {
   void *data;
@@ -23,7 +23,7 @@ typedef struct ArrayItem {
 
 typedef struct IndexNode IndexNode;
 struct IndexNode {
-  IndexNode *children[INDEX_WIDTH];
+  IndexNode **children; // Points to an array of children
   ArrayItem *item;
 };
 
@@ -34,12 +34,10 @@ typedef struct {
   size_t length;
 } Array;
 
-// Create a new index node and return it
+// Create a new index node and return a pointer to it
 IndexNode *index_create(Arena *arena) {
   IndexNode *index = (IndexNode *)a_fill(arena, sizeof(IndexNode));
-  for (size_t i = 0; i < INDEX_WIDTH; i++) {
-    index->children[i] = 0;
-  }
+  index->children = 0;
   index->item = 0;
   return index;
 }
@@ -60,6 +58,12 @@ void index_set(Arena *arena, IndexNode *indexNode, size_t index, void *item) {
     size_t digit = index % INDEX_WIDTH;
     size_t next_index = index / INDEX_WIDTH;
     // If the child node does not exist, create it
+    if (indexNode->children == 0) {
+      indexNode->children = (IndexNode **)a_fill(arena, INDEX_WIDTH * sizeof(IndexNode *));
+      for (size_t i = 0; i < INDEX_WIDTH; i++) {
+        indexNode->children[i] = 0;
+      }
+    }
     if (indexNode->children[digit] == 0) {
       indexNode->children[digit] = index_create(arena);
     }
