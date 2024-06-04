@@ -16,26 +16,21 @@
 
 const size_t INDEX_WIDTH = 16;
 
-typedef struct ArrayItem {
-  void *data;
-  struct ArrayItem *next;
-} ArrayItem;
-
 typedef struct IndexNode IndexNode;
 struct IndexNode {
   IndexNode **children; // Points to an array of children
-  ArrayItem *item;
+  void *item;
 };
 
 typedef struct {
   Arena *arena;
-  ArrayItem *items; // Linked list of items
-  IndexNode *index; // Index tree of items
+  IndexNode *index; // Index tree of all items
   size_t length;
 } Array;
 
 // Create a new index node and return a pointer to it
 IndexNode *index_create(Arena *arena) {
+  // printf("- array.h | Adding IndexNode: %zu\n", sizeof(IndexNode));
   IndexNode *index = (IndexNode *)a_fill(arena, sizeof(IndexNode));
   index->children = 0;
   index->item = 0;
@@ -59,6 +54,7 @@ void index_set(Arena *arena, IndexNode *indexNode, size_t index, void *item) {
     size_t next_index = index / INDEX_WIDTH;
     // If the child node does not exist, create it
     if (indexNode->children == 0) {
+      // printf("- array.h | Adding IndexNode[]: %zu\n", INDEX_WIDTH * sizeof(IndexNode));
       indexNode->children = (IndexNode **)a_fill(arena, INDEX_WIDTH * sizeof(IndexNode *));
       for (size_t i = 0; i < INDEX_WIDTH; i++) {
         indexNode->children[i] = 0;
@@ -89,22 +85,11 @@ void *index_get(IndexNode *indexNode, size_t index) {
   }
 }
 
-// Refill the entire index based on the items in the linked list
-void index_recreate(Array *array) {
-  ArrayItem *item = array->items;
-  size_t index = 0;
-  while (item != 0) {
-    index_set(array->arena, array->index, index, item);
-    item = item->next;
-    index++;
-  }
-}
-
 // Create a new array and return a pointer to it
 Array *array_create(Arena *arena) {
+  // printf("- array.h | Adding Array: %zu\n", sizeof(Array));
   Array *array = (Array *)a_fill(arena, sizeof(Array));
   array->arena = arena;
-  array->items = 0;
   array->index = index_create(arena);
   array->length = 0;
   return array;
@@ -112,21 +97,10 @@ Array *array_create(Arena *arena) {
 
 // Copy data onto the array and add it to the last position
 void array_push(Array *array, void *data, size_t data_size) {
-  void *data_copy = a_fill(array->arena, data_size);
-  memcpy(data_copy, data, data_size);
-  ArrayItem *item = (ArrayItem *)a_fill(array->arena, sizeof(ArrayItem));
-  item->data = data_copy;
-  item->next = 0;
+  // printf("- array.h | Adding data: %zu\n", data_size);
+  void *item = a_fill(array->arena, data_size);
+  memcpy(item, data, data_size);
 
-  if (array->items == 0) {
-    array->items = item;
-  } else {
-    // get last item from index
-    ArrayItem *lastItem = index_get(array->index, array->length - 1);
-    if (lastItem != 0) {
-      lastItem->next = item;
-    }
-  }
   // Add the item to the index
   index_set(array->arena, array->index, array->length, item);
   array->length += 1;
@@ -137,54 +111,29 @@ void *array_pop(Array *array) {
   if (array->length == 0) {
     return 0;
   }
-  void *data = 0;
-  // If there is only one item
-  if (array->length == 1) {
-    data = array->items->data;
-    array->items = 0;
-  } else {
-    // Get the last item and the second to last item
-    ArrayItem *lastItem = index_get(array->index, array->length - 1);
-    data = lastItem->data;
-    ArrayItem *newLastItem = index_get(array->index, array->length - 2);
-    newLastItem->next = 0;
-  }
-  // Remove the popped item from the index
   array->length -= 1;
+  // Get last item and remove it from the index
+  void *data = index_get(array->index, array->length);
   index_set(array->arena, array->index, array->length, 0);
   return data;
 }
 
-// Get the data from the first item and remove it from the array
-void *array_shift(Array *array) {
-  if (array->length == 0) {
-    return 0;
-  }
-  ArrayItem *item = array->items;
-  void *data = item->data;
-  array->items = item->next;
-  array->length -= 1;
-  // Shifts the entire index tree by one
-  index_recreate(array);
-  return data;
-}
-
-// Get the data from the item at the given index starting from 0
+// Get the data at the given index starting from 0
 void *array_get(Array *array, size_t index) {
   if (index >= array->length) {
     return 0;
   }
-  ArrayItem *item = index_get(array->index, index);
-  return item->data;
+  return index_get(array->index, index);
 }
 
-// Set the data at the item at the given index starting from 0
-void array_set(Array *array, size_t index, void *data) {
+// Set the data at the given index starting from 0
+void array_set(Array *array, size_t index, void *data, size_t data_size) {
   if (index >= array->length) {
     return;
   }
-  ArrayItem *item = index_get(array->index, index);
-  item->data = data;
+  void *item = a_fill(array->arena, data_size);
+  memcpy(item, data, data_size);
+  index_set(array->arena, array->index, index, item);
 }
 
 // Return the used size of the array

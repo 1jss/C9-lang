@@ -163,7 +163,7 @@ i32 main(void) {
 
   // set value at last index
   i32 d = 40;
-  array_set(array, array_length(array) - 1, &d);
+  array_set(array, array_length(array) - 1, &d, sizeof(i32));
 
   // find item with value 40
   size_t index = 0;
@@ -176,14 +176,6 @@ i32 main(void) {
     }
     index++;
   }
-
-  for (i32 i = 0; i < 5; i++) {
-    i32 *value = (i32 *)array_shift(array);
-    printf("Shifted value: %d\n", *value);
-  }
-
-  printf("Array length after shift: %zu\n", array_length(array));
-
 
   for (i32 i = 0; i < 10; i++) {
     i32 *value = (i32 *)array_pop(array);
