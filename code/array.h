@@ -3,7 +3,7 @@
 #include <stdlib.h> // size_t
 #include <string.h> // memcpy
 
-#include "arena.h" // Arena, a_open, a_fill, a_close
+#include "arena.h" // Arena, arena_open, arena_fill, arena_close
 
 // Dynamic array implementation that has the following functions:
 // - array_create: initializes the array and returns a pointer to it
@@ -32,7 +32,7 @@ typedef struct {
 // Create a new index node and return a pointer to it
 IndexNode *index_create(Arena *arena) {
   // printf("- array.h | Adding IndexNode: %zu\n", sizeof(IndexNode));
-  IndexNode *index = (IndexNode *)a_fill(arena, sizeof(IndexNode));
+  IndexNode *index = (IndexNode *)arena_fill(arena, sizeof(IndexNode));
   index->children = 0;
   index->item = 0;
   return index;
@@ -56,7 +56,7 @@ void index_set(Arena *arena, IndexNode *indexNode, size_t index, void *item) {
     // If the child node does not exist, create it
     if (indexNode->children == 0) {
       // printf("- array.h | Adding IndexNode[]: %zu\n", INDEX_WIDTH * sizeof(IndexNode));
-      indexNode->children = (IndexNode **)a_fill(arena, INDEX_WIDTH * sizeof(IndexNode *));
+      indexNode->children = (IndexNode **)arena_fill(arena, INDEX_WIDTH * sizeof(IndexNode *));
       for (size_t i = 0; i < INDEX_WIDTH; i++) {
         indexNode->children[i] = 0;
       }
@@ -89,7 +89,7 @@ void *index_get(IndexNode *indexNode, size_t index) {
 // Create a new array and return a pointer to it
 Array *array_create(Arena *arena) {
   // printf("- array.h | Adding Array: %zu\n", sizeof(Array));
-  Array *array = (Array *)a_fill(arena, sizeof(Array));
+  Array *array = (Array *)arena_fill(arena, sizeof(Array));
   array->arena = arena;
   array->index = index_create(arena);
   array->length = 0;
@@ -99,7 +99,7 @@ Array *array_create(Arena *arena) {
 // Copy data onto the array and add it to the last position
 void array_push(Array *array, void *data, size_t data_size) {
   // printf("- array.h | Adding data: %zu\n", data_size);
-  void *item = a_fill(array->arena, data_size);
+  void *item = arena_fill(array->arena, data_size);
   memcpy(item, data, data_size);
 
   // Add the item to the index
@@ -132,7 +132,7 @@ void array_set(Array *array, size_t index, void *data, size_t data_size) {
   if (index >= array->length) {
     return;
   }
-  void *item = a_fill(array->arena, data_size);
+  void *item = arena_fill(array->arena, data_size);
   memcpy(item, data, data_size);
   index_set(array->arena, array->index, index, item);
 }

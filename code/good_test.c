@@ -2,7 +2,7 @@
 
 #include <stdio.h> // printf, size_t
 
-#include "arena.h" // Arena, a_open, a_fill, a_size, a_capacity, a_reset, a_close
+#include "arena.h" // Arena, arena_open, arena_fill, arena_size, arena_capacity, arena_reset, arena_close
 #include "array.h" // Array, array_create, array_push, array_shift, array_pop, array_get, array_set, array_length, array_last
 #include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8, bool
 
@@ -118,35 +118,35 @@ i32 main(void) {
   printf("Difference: %d\n", difference);
   printf("Rectangle width: %d, height: %d\n", rectangle.width, rectangle.height);
 
-  Arena *arena = a_open(12); // Intentionally small arena for testing growth
-  printf("Arena size: %zu\n", a_size(arena));
-  printf("Arena capacity: %zu\n", a_capacity(arena));
+  Arena *arena = arena_open(12); // Intentionally small arena for testing growth
+  printf("Arena size: %zu\n", arena_size(arena));
+  printf("Arena capacity: %zu\n", arena_capacity(arena));
 
-  TestStruct *arena_data = a_fill(arena, sizeof(TestStruct));
+  TestStruct *arena_data = arena_fill(arena, sizeof(TestStruct));
   if (arena_data == 0) {
     printf("Failed to allocate memory in arena\n");
     return 1;
   }
 
-  i32 *arena_int = a_fill(arena, sizeof(i32));
+  i32 *arena_int = arena_fill(arena, sizeof(i32));
   if (arena_int == 0) {
     printf("Failed to allocate memory in arena\n");
     return 1;
   }
 
   *arena_data = test_struct;
-  printf("Arena size after fill: %zu\n", a_size(arena));
-  printf("Arena capacity after fill: %zu\n", a_capacity(arena));
+  printf("Arena size after fill: %zu\n", arena_size(arena));
+  printf("Arena capacity after fill: %zu\n", arena_capacity(arena));
 
-  a_reset(arena);
-  printf("Arena size after reset: %zu\n", a_size(arena));
-  printf("Arena capacity after reset: %zu\n\n", a_capacity(arena));
+  arena_reset(arena);
+  printf("Arena size after reset: %zu\n", arena_size(arena));
+  printf("Arena capacity after reset: %zu\n\n", arena_capacity(arena));
 
-  a_close(arena);
+  arena_close(arena);
 
   // test the array functions
 
-  Arena *array_arena = a_open(1024);
+  Arena *array_arena = arena_open(1024);
   Array *array = array_create(array_arena);
 
   i32 a = 10;
@@ -190,10 +190,10 @@ i32 main(void) {
 
   printf("Array length after push: %zu\n", array_length(array));
 
-  printf("Array arena storage: %zu\n", a_size(array_arena));
-  printf("Array arena capacity: %zu\n", a_capacity(array_arena));
+  printf("Array arena storage: %zu\n", arena_size(array_arena));
+  printf("Array arena capacity: %zu\n", arena_capacity(array_arena));
 
-  a_close(array_arena);
+  arena_close(array_arena);
 
   return 0;
 }

@@ -4,12 +4,12 @@
 #include <stdlib.h>   // malloc, free, size_t
 
 // Simple arena allocator that has the following functions:
-// - a_open: initializes the arena and returns a pointer to it
-// - a_fill: allocates memory in the arena and returns a pointer to it
-// - a_close: frees all memory in the arena and all sub-arenas
-// - a_reset: resets all heads in arena and sub-arenas to 0 without freeing memory
-// - a_size: returns the used size of the arena and all sub-arenas
-// - a_capacity: returns the total capacity of the arena and all sub-arenas
+// - arena_open: initializes the arena and returns a pointer to it
+// - arena_fill: allocates memory in the arena and returns a pointer to it
+// - arena_close: frees all memory in the arena and all sub-arenas
+// - arena_reset: resets all heads in arena and sub-arenas to 0 without freeing memory
+// - arena_size: returns the used size of the arena and all sub-arenas
+// - arena_capacity: returns the total capacity of the arena and all sub-arenas
 
 // If an arena is full it will create a new arena and link to it as a sub-arena
 // When freeing an arena it will also free all sub-arenas
@@ -25,8 +25,8 @@ typedef struct Arena {
   struct Arena *next;
 } Arena;
 
-// a_open creates a new arena with a size and returns a pointer to it
-Arena *a_open(size_t size) {
+// arena_open creates a new arena with a size and returns a pointer to it
+Arena *arena_open(size_t size) {
   Arena *arena = (Arena *)malloc(sizeof(Arena));
   arena->data = (uint8_t *)malloc(size);
   arena->head = 0;
@@ -35,8 +35,8 @@ Arena *a_open(size_t size) {
   return arena;
 }
 
-// a_fill: allocates memory in the arena and returns a pointer to it
-void *a_fill(Arena *arena, size_t size) {
+// arena_fill: allocates memory in the arena and returns a pointer to it
+void *arena_fill(Arena *arena, size_t size) {
   // If size is larger than 4, align to 8 bytes
   int8_t align_to = size > 4 ? 8 : 4;
   size_t aligned_head = arena->head;
@@ -53,12 +53,12 @@ void *a_fill(Arena *arena, size_t size) {
     if (arena->next == 0) {
       // Cap the arena size at MAX_ARENA_SIZE
       if (arena->capacity * 2 > MAX_ARENA_SIZE) {
-        arena->next = a_open(MAX_ARENA_SIZE);
+        arena->next = arena_open(MAX_ARENA_SIZE);
       } else {
-        arena->next = a_open(arena->capacity * 2);
+        arena->next = arena_open(arena->capacity * 2);
       }
     }
-    return a_fill(arena->next, size);
+    return arena_fill(arena->next, size);
   }
   // Point to the start of the aligned memory block and move the head
   void *ptr = arena->data + aligned_head;
@@ -66,37 +66,37 @@ void *a_fill(Arena *arena, size_t size) {
   return ptr;
 }
 
-// a_close: frees all memory in the arena and all sub-arenas
-void a_close(Arena *arena) {
+// arena_close: frees all memory in the arena and all sub-arenas
+void arena_close(Arena *arena) {
   if (arena->next != 0) {
-    a_close(arena->next);
+    arena_close(arena->next);
   }
   free(arena->data);
   free(arena);
 }
 
-// a_reset: resets all heads in arena and sub-arenas to 0 without freeing memory
-void a_reset(Arena *arena) {
+// arena_reset: resets all heads in arena and sub-arenas to 0 without freeing memory
+void arena_reset(Arena *arena) {
   arena->head = 0;
   if (arena->next != 0) {
-    a_reset(arena->next);
+    arena_reset(arena->next);
   }
 }
 
-// a_size: returns the used size of the arena and all sub-arenas
-size_t a_size(Arena *arena) {
+// arena_size: returns the used size of the arena and all sub-arenas
+size_t arena_size(Arena *arena) {
   if (arena->next == 0) {
     return arena->head;
   }
-  return arena->head + a_size(arena->next);
+  return arena->head + arena_size(arena->next);
 }
 
-// a_capacity: returns the total capacity of the arena and all sub-arenas
-size_t a_capacity(Arena *arena) {
+// arena_capacity: returns the total capacity of the arena and all sub-arenas
+size_t arena_capacity(Arena *arena) {
   if (arena->next == 0) {
     return arena->capacity;
   }
-  return arena->capacity + a_capacity(arena->next);
+  return arena->capacity + arena_capacity(arena->next);
 }
 
 #define C9_ARENA

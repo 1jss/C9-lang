@@ -384,10 +384,10 @@ free(other_heap_value);
 
 // Encouraged
 #import "arena.h"
-Arena *arena_name = a_open(1024);
-int32_t *heap_value = a_fill(arena_name, sizeof(int32_t));
-int32_t *other_heap_value = a_fill(arena_name, sizeof(int32_t));
-a_close(arena_name);
+Arena *arena_name = arena_open(1024);
+int32_t *heap_value = arena_fill(arena_name, sizeof(int32_t));
+int32_t *other_heap_value = arena_fill(arena_name, sizeof(int32_t));
+arena_close(arena_name);
 
 ```
 
