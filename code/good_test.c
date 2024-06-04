@@ -3,7 +3,7 @@
 #include <stdio.h> // printf, size_t
 
 #include "arena.h" // Arena, a_open, a_fill, a_size, a_capacity, a_reset, a_close
-#include "array.h" // Array, array_create, array_push, array_shift, array_pop, array_get, array_set, array_length
+#include "array.h" // Array, array_create, array_push, array_shift, array_pop, array_get, array_set, array_length, array_last
 #include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8, bool
 
 #if 0
@@ -163,12 +163,12 @@ i32 main(void) {
 
   // set value at last index
   i32 d = 40;
-  array_set(array, array_length(array) - 1, &d, sizeof(i32));
+  array_set(array, array_last(array), &d, sizeof(i32));
 
   // find item with value 40
   size_t index = 0;
   bool found = false;
-  while (index < array_length(array) && !found) {
+  while (index <= array_last(array) && !found) {
     i32 *value = (i32 *)array_get(array, index);
     if (value != 0 && *value == 40) {
       printf("Found value 40 at index: %zu\n", index);

@@ -13,6 +13,7 @@
 // - array_get: returns the element at the given index
 // - array_set: sets the element at the given index
 // - array_length: returns the used size of the array
+// - array_last: returns the last index of the array
 
 const size_t INDEX_WIDTH = 16;
 
@@ -139,6 +140,15 @@ void array_set(Array *array, size_t index, void *data, size_t data_size) {
 // Return the used size of the array
 size_t array_length(Array *array) {
   return array->length;
+}
+
+// Get last index of the array
+size_t array_last(Array *array) {
+  // If the array is empty return -1
+  if (array->length == 0) {
+    return -1;
+  }
+  return array->length - 1;
 }
 
 #define C9_ARRAY
