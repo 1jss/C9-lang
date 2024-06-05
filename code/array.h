@@ -1,5 +1,6 @@
 #ifndef C9_ARRAY
 
+#include <math.h>   // log2, ceil, pow
 #include <stdlib.h> // size_t
 #include <string.h> // memcpy
 
@@ -15,7 +16,7 @@
 // - array_length: returns the used size of the array
 // - array_last: returns the last index of the array
 
-const size_t INDEX_WIDTH = 16;
+const size_t DEFAULT_INDEX_WIDTH = 16;
 
 typedef struct IndexNode IndexNode;
 struct IndexNode {
@@ -27,6 +28,7 @@ typedef struct {
   Arena *arena;
   IndexNode *index; // Index tree of all items
   size_t length;
+  size_t index_width;
 } Array;
 
 // Create a new index node and return a pointer to it
@@ -38,62 +40,95 @@ IndexNode *index_create(Arena *arena) {
   return index;
 }
 
+typedef struct {
+  Arena *arena;
+  IndexNode *indexNode;
+  size_t index;
+  size_t index_width;
+  void *item;
+} index_set_params;
+
 // Set item at the given index
-void index_set(Arena *arena, IndexNode *indexNode, size_t index, void *item) {
+void index_set(index_set_params params) {
   // If the indexNode is 0 there is nothing to add to
-  if (indexNode == 0) {
+  if (params.indexNode == 0) {
     return;
   }
   // If the index is 0 we are at the leaf and should set the data
-  else if (index == 0) {
-    indexNode->item = item;
+  else if (params.index == 0) {
+    params.indexNode->item = params.item;
     return;
   }
   // Otherwise we need to go deeper into the tree
   else {
-    size_t digit = index % INDEX_WIDTH;
-    size_t next_index = index / INDEX_WIDTH;
+    size_t digit = params.index % params.index_width;
+    size_t next_index = params.index / params.index_width;
     // If the child node does not exist, create it
-    if (indexNode->children == 0) {
-      // printf("- array.h | Adding IndexNode[]: %zu\n", INDEX_WIDTH * sizeof(IndexNode));
-      indexNode->children = (IndexNode **)arena_fill(arena, INDEX_WIDTH * sizeof(IndexNode *));
-      for (size_t i = 0; i < INDEX_WIDTH; i++) {
-        indexNode->children[i] = 0;
+    if (params.indexNode->children == 0) {
+      params.indexNode->children = (IndexNode **)arena_fill(params.arena, params.index_width * sizeof(IndexNode *));
+      for (size_t i = 0; i < params.index_width; i++) {
+        params.indexNode->children[i] = 0;
       }
     }
-    if (indexNode->children[digit] == 0) {
-      indexNode->children[digit] = index_create(arena);
+    if (params.indexNode->children[digit] == 0) {
+      params.indexNode->children[digit] = index_create(params.arena);
     }
-    index_set(arena, indexNode->children[digit], next_index, item);
+    index_set_params next_params = {
+      .arena = params.arena,
+      .indexNode = params.indexNode->children[digit],
+      .index = next_index,
+      .index_width = params.index_width,
+      .item = params.item
+    };
+    // Continue to the next node
+    index_set(next_params);
   }
 }
 
+typedef struct {
+  IndexNode *indexNode;
+  size_t index;
+  size_t index_width;
+} index_get_params;
+
 // Get the item at the given index
-void *index_get(IndexNode *indexNode, size_t index) {
+void *index_get(index_get_params params) {
   // If the indexNode is 0 there is nothing to get from
-  if (indexNode == 0) {
+  if (params.indexNode == 0) {
     return 0;
   }
   // If the index is 0 we are at the leaf and should return the data
-  else if (index == 0) {
-    return indexNode->item;
+  else if (params.index == 0) {
+    return params.indexNode->item;
   }
   // Otherwise we need to go deeper
   else {
-    size_t digit = index % INDEX_WIDTH;
-    size_t next_index = index / INDEX_WIDTH;
-    return index_get(indexNode->children[digit], next_index);
+    size_t digit = params.index % params.index_width;
+    size_t next_index = params.index / params.index_width;
+    index_get_params next_params = {
+      .indexNode = params.indexNode->children[digit],
+      .index = next_index,
+      .index_width = params.index_width
+    };
+    return index_get(next_params);
   }
 }
 
-// Create a new array and return a pointer to it
-Array *array_create(Arena *arena) {
-  // printf("- array.h | Adding Array: %zu\n", sizeof(Array));
+// Create a new array width a given index width and return a pointer to it
+// Index width is the number of children each node can have.
+// The optimal value is determined by the number of items in the array.
+Array *array_create_width(Arena *arena, size_t index_width) {
   Array *array = (Array *)arena_fill(arena, sizeof(Array));
   array->arena = arena;
   array->index = index_create(arena);
   array->length = 0;
+  array->index_width = index_width;
   return array;
+}
+
+// Create a new default array and return a pointer to it
+Array *array_create(Arena *arena) {
+  return array_create_width(arena, DEFAULT_INDEX_WIDTH);
 }
 
 // Copy data onto the array and add it to the last position
@@ -103,7 +138,14 @@ void array_push(Array *array, void *data, size_t data_size) {
   memcpy(item, data, data_size);
 
   // Add the item to the index
-  index_set(array->arena, array->index, array->length, item);
+  index_set_params set_params = {
+    .arena = array->arena,
+    .indexNode = array->index,
+    .index = array->length,
+    .index_width = array->index_width,
+    .item = item
+  };
+  index_set(set_params);
   array->length += 1;
 }
 
@@ -114,8 +156,20 @@ void *array_pop(Array *array) {
   }
   array->length -= 1;
   // Get last item and remove it from the index
-  void *data = index_get(array->index, array->length);
-  index_set(array->arena, array->index, array->length, 0);
+  index_get_params get_params = {
+    .indexNode = array->index,
+    .index = array->length,
+    .index_width = array->index_width
+  };
+  void *data = index_get(get_params);
+  index_set_params set_params = {
+    .arena = array->arena,
+    .indexNode = array->index,
+    .index = array->length,
+    .index_width = array->index_width,
+    .item = 0
+  };
+  index_set(set_params);
   return data;
 }
 
@@ -124,7 +178,12 @@ void *array_get(Array *array, size_t index) {
   if (index >= array->length) {
     return 0;
   }
-  return index_get(array->index, index);
+  index_get_params get_params = {
+    .indexNode = array->index,
+    .index = index,
+    .index_width = array->index_width
+  };
+  return index_get(get_params);
 }
 
 // Set the data at the given index starting from 0
@@ -134,7 +193,14 @@ void array_set(Array *array, size_t index, void *data, size_t data_size) {
   }
   void *item = arena_fill(array->arena, data_size);
   memcpy(item, data, data_size);
-  index_set(array->arena, array->index, index, item);
+  index_set_params set_params = {
+    .arena = array->arena,
+    .indexNode = array->index,
+    .index = index,
+    .index_width = array->index_width,
+    .item = item
+  };
+  index_set(set_params);
 }
 
 // Return the used size of the array
