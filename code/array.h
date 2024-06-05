@@ -7,8 +7,10 @@
 #include "arena.h" // Arena, arena_open, arena_fill, arena_close
 
 #if 0
+
 Dynamic array implementation that has the following functions:
  - array_create: initializes the array and returns a pointer to it
+ - array_create_width: initializes the array with a given index width and returns a pointer to it
  - array_destroy: frees all memory in the array
  - array_push: adds an element to the array
  - array_pop: removes the last element from the array

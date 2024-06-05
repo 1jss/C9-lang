@@ -3,17 +3,21 @@
 #include <inttypes.h> // uint8_t, int32_t, int64_t, uint32_t, uint64_t
 #include <stdlib.h>   // malloc, free, size_t
 
-// Simple arena allocator that has the following functions:
-// - arena_open: initializes the arena and returns a pointer to it
-// - arena_fill: allocates memory in the arena and returns a pointer to it
-// - arena_close: frees all memory in the arena and all sub-arenas
-// - arena_reset: resets all heads in arena and sub-arenas to 0 without freeing memory
-// - arena_size: returns the used size of the arena and all sub-arenas
-// - arena_capacity: returns the total capacity of the arena and all sub-arenas
+#if 0
 
-// If an arena is full it will create a new arena and link to it as a sub-arena
-// When freeing an arena it will also free all sub-arenas
-// Maximum arena size is 1GB
+Simple arena allocator that has the following functions:
+- arena_open: initializes the arena and returns a pointer to it
+- arena_fill: allocates memory in the arena and returns a pointer to it
+- arena_close: frees all memory in the arena and all sub-arenas
+- arena_reset: resets all heads in arena and sub-arenas to 0 without freeing memory
+- arena_size: returns the used size of the arena and all sub-arenas
+- arena_capacity: returns the total capacity of the arena and all sub-arenas
+
+The arena is implemented as a linked list of arenas, where each arena has a pointer to the next arena. This lets the arena size grow dynamically. The size of the first arena is set at creation. When the first arena is full it will create a new arena of double the size and link to it. The size of an individual subsequent arena is capped at 1GB, which means that the largest object that can be stored in the arena is 1GB.
+
+When freeing an arena it will also free all sub-arenas. This encourages the use of smaller arenas for temporary allocations and larger arenas for more permanent allocations.
+
+#endif
 
 // Set MAX_ARENA_SIZE to the smallest of maximum size_t or 1GB
 const size_t MAX_ARENA_SIZE = (size_t)-1 < 1024 * 1024 * 1024 ? (size_t)-1 : 1024 * 1024 * 1024;
