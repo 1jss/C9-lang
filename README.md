@@ -8,22 +8,26 @@ The purpose of C9 is to create a learnable, portable and readable programming la
 All C99 keywords are reserved in C9, but many are not allowed.
 
 Some keywords are only allowed in specific contexts:
-- `break` is not allowed outside of switch statements
 - `const` is not allowed in local scope (inside functions)
 
 ANSI C keywords:
 
 |              |              |              |            |
 | ------------ | ------------ | ------------ | ---------- |
-| ~~auto~~     | _break_      | case         | ~~char~~   |
-| _const_      | ~~continue~~ | default      | ~~do~~     |
+| ~~auto~~     | ~~break~~  | ~~case~~     | ~~char~~   |
+| _const_      | ~~continue~~ | ~~default~~  | ~~do~~     |
 | double       | else         | ~~enum~~     | ~~extern~~ |
 | float        | for          | ~~goto~~     | if         |
 | ~~int~~      | ~~long~~     | ~~register~~ | return     |
 | ~~short~~    | ~~signed~~   | sizeof       | static     |
-| struct       | switch       | typedef      | union      |
+| struct       | ~~switch~~   | typedef      | union      |
 | ~~unsigned~~ | void         | ~~volatile~~ | while      |
 
+Reasons:
+- Several keyowrds are removed as they are connected to discouraged or uncommon programming patterns (auto, continue, do, extern, goto, register, volatile). If you need any of these, use normal C99 instead.
+- Keywords connected to integer types of different sizes (char, int, long, short, signed, unsigned) are not allowed as they can vary between systems. Use `inttypes.h` or C9's `types.h` instead.
+- Switch case statements are removed as they are a common source of errors (fallthrough), require 4 keywords (switch, case, break, default) and can only handle matches of int and char. The switch case is replaced with if else statements.
+- Enums are removed as they are not type safe and can cause namespace collisions. Enums are replaced with constant structs.
 
 C99 keywords:
 
@@ -33,36 +37,43 @@ C99 keywords:
 | _Bool      |  _Complex    |
 | _Imaginary |              |
 
-
-As C9 is guaranteed to be C99 compliant, but any keywords from newer C standards are also reserved and not allowed.
+C9 is guaranteed to be C99 compliant, but any keywords from newer C standards are also reserved and not allowed.
 
 This leaves the following keywords available in C9:
 
 |         |          |            |          |
 | ------- | -------- | ---------- | -------- |
-| _break_ | case     | _const_    | double   |
-| else    | float    | for        | if       |
-| return  | sizeof   | static     | struct   |
-| switch  | typedef  | union      | void     |
-| while   |          |            |          |
+| _const_ | double   | else       | float    |
+| for     | if       | return     | sizeof   |
+| static  | struct   | typedef    | union    |
+| void    | while    |            |          |
 
 _Bool, _Complex, _Imaginary
 
 ## Types
 
-- No built in integer types are allowed as they can vary in size. Use `inttypes.h` or C9's `types.h` instead.
+- The built in integer types are not allowed as they can vary in size between systems. Use `inttypes.h` or C9's `types.h` instead.
 
 ```C
 // Not allowed
-int a = 0;
+char a = 0;
+short b = 0;
+int c = 0;
+long d = 0;
 
 // Allowed
 #import <inttypes.h>
-int32_t a = 0;
+int8_t a = 0;
+int16_t b = 0;
+int32_t c = 0;
+int64_t d = 0;
 
 // Allowed
 #import "types.h"
-u32 a = 0;
+i8 a = 0;
+i16 b = 0;
+i32 c = 0;
+i64 d = 0;
 ```
 
 - Implicit ints are not used nor allowed.
@@ -79,20 +90,6 @@ int32_t a = 0;
 int32_t function(int32_t a) {
   return a;
 }
-```
-
-- The long and short keywords are not allowed as they can vary in size between systems.
-  
-```C
-// Not allowed
-short a = 0;
-long b = 0;
-long long c = 0;
-
-// Allowed
-int16_t a = 0;
-int32_t b = 0;
-int64_t c = 0;
 ```
 
 - All variables and pointers must be initiated with a value.
