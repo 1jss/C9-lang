@@ -25,8 +25,10 @@ typedef struct {
   i32 b;
 } TestStruct;
 
-typedef enum { DATA,
-               ERROR } ReturnType;
+typedef enum {
+  DATA,
+  ERROR
+} ReturnType;
 
 typedef struct {
   i32 code;
