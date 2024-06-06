@@ -5,8 +5,18 @@
 #include <stddef.h>   // size_t
 #include <stdio.h>    // printf
 
+#if 0
+
+This header defines a set of standard types. The type names are similar to those of Rust and Zig.
+
+#endif
+
+typedef int8_t i8;
+typedef int16_t i16;
 typedef int32_t i32;
 typedef int64_t i64;
+typedef uint8_t u8;
+typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
 typedef float f32;
@@ -23,20 +33,6 @@ s8 str8(char *s) {
     len++;
   }
   return (s8){(uint8_t *)s, len};
-}
-
-void print_i32(i32 value) { printf("%" PRId32, value); }
-void print_i64(i64 value) { printf("%" PRId64, value); }
-void print_u32(u32 value) { printf("%" PRIu32, value); }
-void print_u64(u64 value) { printf("%" PRIu64, value); }
-void print_f32(f32 value) { printf("%f", value); }
-void print_f64(f64 value) { printf("%f", value); }
-void print_bool(bool value) { printf("%d", value); }
-void print_string(char *value) { printf("%s", value); }
-void print_s8(s8 value) {
-  for (size_t i = 0; i < value.len; i++) {
-    printf("%c", value.data[i]);
-  }
 }
 
 #define C9_TYPES

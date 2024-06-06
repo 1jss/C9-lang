@@ -4,7 +4,8 @@
 
 #include "arena.h" // Arena, arena_open, arena_fill, arena_size, arena_capacity, arena_reset, arena_close
 #include "array.h" // Array, array_create, array_push, array_shift, array_pop, array_get, array_set, array_length, array_last
-#include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8, bool
+#include "types.h" // i32, f32, s8, str8, bool
+#include "types_print.h" // iprint_f32, print_i32, print_s8
 #include "status.h" // status
 
 #if 0
