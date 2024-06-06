@@ -24,14 +24,13 @@ def get_function_usage(file_path):
   internal_function_usage = re.findall(r'[\( ]+(\w+)\(\&?[\w]+\).*\);', content)
   return function_usage + internal_function_usage
 
-# extract C typedef struct and enum definition names
+# extract C typedef struct definition names
 def get_type_definitions(file_path):
   with open(file_path, 'r') as file:
     content = file.read()
   struct_definitions = re.findall(r'typedef struct {(?:\s+.+\s)+} (\w+);', content)
-  enum_definitions = re.findall(r'typedef enum {(?:\s+\w+.+)+} (\w+);', content)
   simple_typedefs = re.findall(r'typedef \w+ (\w+);', content)
-  return struct_definitions + enum_definitions + simple_typedefs
+  return struct_definitions + simple_typedefs
 
 # extract type usage such as variable declarations, function return types and function arguments
 def get_type_usage(file_path):

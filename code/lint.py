@@ -49,7 +49,7 @@ def lint(filename):
             # This rule is difficult to enforce with a regex as it requires context-sensitive parsing.
             # We will skip this rule for now.
 
-            # Rule: Names of structs, unions and enums must be unique
+            # Rule: Names of structs and unions must be unique
             # This rule is difficult to enforce with a regex as it requires context-sensitive parsing.
             # We will skip this rule for now.
 

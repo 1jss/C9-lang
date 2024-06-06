@@ -17,7 +17,7 @@ ANSI C keywords:
 | ------------ | ------------ | ------------ | ---------- |
 | ~~auto~~     | _break_      | case         | ~~char~~   |
 | _const_      | ~~continue~~ | default      | ~~do~~     |
-| double       | else         | enum         | ~~extern~~ |
+| double       | else         | ~~enum~~     | ~~extern~~ |
 | float        | for          | ~~goto~~     | if         |
 | ~~int~~      | ~~long~~     | ~~register~~ | return     |
 | ~~short~~    | ~~signed~~   | sizeof       | static     |
@@ -41,10 +41,10 @@ This leaves the following keywords available in C9:
 |         |          |            |          |
 | ------- | -------- | ---------- | -------- |
 | _break_ | case     | _const_    | double   |
-| else    | enum     | float      | for      |
-| if      | return   | sizeof     | static   |
-| struct  | switch   | typedef    | union    |
-| void    | while    |            |          |
+| else    | float    | for        | if       |
+| return  | sizeof   | static     | struct   |
+| switch  | typedef  | union      | void     |
+| while   |          |            |          |
 
 _Bool, _Complex, _Imaginary
 
@@ -170,7 +170,7 @@ int32_t getA(void) {
 }
 ```
 
-- Names of structs, unions and enums must be unique
+- Names of structs and unions must be unique
 
 ## Structs
 
@@ -235,6 +235,35 @@ typedef struct {
   int32_t width;
   int32_t height;
 } RectangleType;
+```
+
+- Use constant structs instead of enums. This allows for more typed enums and prevents filling up the global namespace.
+  
+```C
+// Not allowed
+typedef enum {
+  RED = 0
+  GREEN = 1
+  BLUE = 2
+} ColorType;
+
+int32_t color = RED;
+
+// Allowed
+typedef struct {
+  const int32_t RED;
+  const int32_t GREEN;
+  const int32_t BLUE;
+} ColorType;
+
+const ColorType colors = {
+  .RED = 0,
+  .GREEN = 1,
+  .BLUE = 2
+};
+
+int32_t color = colors.RED;
+
 ```
 
 ## Functions
@@ -449,7 +478,7 @@ Reasons:
 - Macros can't be type checked as they are just text replacements
 - Macros have no namespace and can cause name collisions
 - Macro functions can almost always be replaced with functions
-- Macro defines can be replaced with constants or enums
+- Macro defines can be replaced with constants
 - The C spec for macros is not well defined and can vary between compilers
 - C9 is one language, not 2 languages (C and the preprocessor)
 

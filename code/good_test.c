@@ -5,6 +5,7 @@
 #include "arena.h" // Arena, arena_open, arena_fill, arena_size, arena_capacity, arena_reset, arena_close
 #include "array.h" // Array, array_create, array_push, array_shift, array_pop, array_get, array_set, array_length, array_last
 #include "types.h" // i32, f32, print_f32, print_i32, print_s8, s8, str8, bool
+#include "status.h" // status
 
 #if 0
 This is a comment
@@ -25,18 +26,13 @@ typedef struct {
   i32 b;
 } TestStruct;
 
-typedef enum {
-  DATA,
-  ERROR
-} ReturnType;
-
 typedef struct {
   i32 code;
   s8 message;
 } ErrorType;
 
 typedef struct {
-  ReturnType type;
+  i32 type;
   union {
     f32 result;
     ErrorType error;
@@ -46,11 +42,11 @@ typedef struct {
 static ReturnDataType divide(TestStruct props) {
   if (props.b == 0) {
     ErrorType error = {.code = 1, .message = str8("Division by zero")};
-    ReturnDataType data = {.type = ERROR, .error = error};
+    ReturnDataType data = {.type = status.ERROR, .error = error};
     return data;
   }
   f32 value = (f32)props.a / (f32)props.b;
-  ReturnDataType data = {.type = DATA, .result = value};
+  ReturnDataType data = {.type = status.OK, .result = value};
   return data;
 }
 
@@ -96,7 +92,7 @@ i32 main(void) {
   RectangleType rectangle = createRectangle(test_struct);
 
   ReturnDataType good_result = divide(test_struct);
-  if (good_result.type == DATA) {
+  if (good_result.type == status.OK) {
     print_f32(good_result.result);
     printf("\n");
   } else {
@@ -106,7 +102,7 @@ i32 main(void) {
   }
 
   ReturnDataType bad_result = divide((TestStruct){.a = 10, .b = 0});
-  if (bad_result.type == DATA) {
+  if (bad_result.type == status.OK) {
     print_f32(bad_result.result);
     printf("\n");
   } else {
