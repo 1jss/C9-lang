@@ -4,8 +4,9 @@
 
 #include "arena.h" // Arena, arena_open, arena_fill, arena_size, arena_capacity, arena_reset, arena_close
 #include "array.h" // Array, array_create, array_push, array_shift, array_pop, array_get, array_set, array_length, array_last
-#include "types.h" // i32, f32, s8, str8, bool
-#include "types_print.h" // iprint_f32, print_i32, print_s8
+#include "types.h" // i32, f32, bool
+#include "types_print.h" // print_f32, print_i32
+#include "string.h" // s8, to_s8, print_s8
 #include "status.h" // status
 
 #if 0
@@ -42,7 +43,7 @@ typedef struct {
 
 static ReturnDataType divide(TestStruct props) {
   if (props.b == 0) {
-    ErrorType error = {.code = 1, .message = str8("Division by zero")};
+    ErrorType error = {.code = 1, .message = to_s8("Division by zero")};
     ReturnDataType data = {.type = status.ERROR, .error = error};
     return data;
   }
@@ -85,10 +86,10 @@ i32 main(void) {
   // Using compound literal as a cast
   i32 sum_again = add((TestStruct){.a = 10, .b = 20});
 
-  s8 text_data = str8("Hello, world!");
+  s8 text_data = to_s8("Hello, world!");
   print_s8(text_data);
   printf(" : ");
-  print_i32(text_data.len);
+  print_i32(text_data.length);
   printf("\n");
   RectangleType rectangle = createRectangle(test_struct);
 

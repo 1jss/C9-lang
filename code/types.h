@@ -1,9 +1,6 @@
 #ifndef C9_TYPES
 
-#include <inttypes.h> // uint8_t, int32_t, int64_t, uint32_t, uint64_t
-#include <stdbool.h>  // bool
-#include <stddef.h>   // size_t
-#include <stdio.h>    // printf
+#include <inttypes.h> // int8_t, int16_t int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t
 
 #if 0
 
@@ -21,19 +18,6 @@ typedef uint32_t u32;
 typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
-
-typedef struct {
-  uint8_t *data;
-  size_t len;
-} s8;
-
-s8 str8(char *s) {
-  uint32_t len = 0;
-  while (s[len] != '\0') {
-    len++;
-  }
-  return (s8){(uint8_t *)s, len};
-}
 
 #define C9_TYPES
 #endif
