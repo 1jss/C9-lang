@@ -45,6 +45,7 @@ The array index is stored in an arena allocator to allow for fast allocation and
 #endif
 
 const size_t DEFAULT_INDEX_WIDTH = 16;
+const size_t INVALID_ARRAY_INDEX = -1;
 
 typedef struct IndexNode IndexNode;
 struct IndexNode {
@@ -232,8 +233,8 @@ size_t array_length(Array *array) {
 
 // Get last index of the array
 size_t array_last(Array *array) {
-  // If the array is empty return -1
-  if (array->length == 0) return -1;
+  // If the array is empty
+  if (array->length == 0) return INVALID_ARRAY_INDEX;
   return array->length - 1;
 }
 

@@ -195,5 +195,29 @@ i32 main(void) {
 
   arena_close(array_arena);
 
+  Arena *string_arena = arena_open(512);
+  s8 hello = to_s8("Hello");
+  s8 world = to_s8("World");
+  s8 hello_world = concat_s8(string_arena, hello, world);
+
+  bool includes = includes_s8(hello_world, to_s8("loWo"));
+
+  print_s8(hello_world);
+  if (includes) {
+    printf(" includes 'loWo'\n");
+  } else {
+    printf(" does not include 'loWo'\n");
+  }
+
+  s8 replaced_hello = replace_s8(string_arena, hello_world, to_s8("loWo"), to_s8("lo wo"));
+
+  print_s8(replaced_hello);
+  printf(" %zu\n", replaced_hello.length);
+
+  s8 all_replaced = replaceall_s8(string_arena, replaced_hello, to_s8("l"), to_s8("j"));
+  print_s8(all_replaced);
+
+  arena_close(string_arena);
+
   return 0;
 }
