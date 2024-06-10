@@ -29,26 +29,20 @@ typedef struct {
 } TestStruct;
 
 typedef struct {
-  i32 code;
-  s8 message;
-} ErrorType;
-
-typedef struct {
-  i32 type;
+  i32 status;
   union {
     f32 result;
-    ErrorType error;
+    s8 error_message;
   };
 } ReturnDataType;
 
 static ReturnDataType divide(TestStruct props) {
   if (props.b == 0) {
-    ErrorType error = {.code = 1, .message = to_s8("Division by zero")};
-    ReturnDataType data = {.type = status.ERROR, .error = error};
+    ReturnDataType data = {.status = status.ERROR, .error_message = to_s8("Division by zero")};
     return data;
   }
   f32 value = (f32)props.a / (f32)props.b;
-  ReturnDataType data = {.type = status.OK, .result = value};
+  ReturnDataType data = {.status = status.OK, .result = value};
   return data;
 }
 
@@ -94,22 +88,22 @@ i32 main(void) {
   RectangleType rectangle = createRectangle(test_struct);
 
   ReturnDataType good_result = divide(test_struct);
-  if (good_result.type == status.OK) {
+  if (good_result.status == status.OK) {
     print_f32(good_result.result);
     printf("\n");
   } else {
     printf("Error: ");
-    print_s8(good_result.error.message);
+    print_s8(good_result.error_message);
     printf("\n");
   }
 
   ReturnDataType bad_result = divide((TestStruct){.a = 10, .b = 0});
-  if (bad_result.type == status.OK) {
+  if (bad_result.status == status.OK) {
     print_f32(bad_result.result);
     printf("\n");
   } else {
     printf("Error: ");
-    print_s8(bad_result.error.message);
+    print_s8(bad_result.error_message);
     printf("\n");
   }
 
