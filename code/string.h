@@ -9,7 +9,7 @@
 
 #if 0
 
-This header defines a string type and helper functions for it.
+This header defines a string type and helper functions for it. The string type is implemented like a simple struct, ie no pointer tricks. The creative helper functions, like copy and replace are returning new strings, not modifying the input strings. These functions also take an arena as an argument, where it allocates memory for the new string. The same arena can preferably be used for many strings and be freed all at once.
 - s8: a struct that represents a string
 - to_s8: a function that converts a char array to an s8
 - print_s8: a function that prints an s8
@@ -31,17 +31,17 @@ typedef struct {
   size_t length;
 } s8;
 
-s8 to_s8(char *s) {
+s8 to_s8(char *string) {
   uint32_t length = 0;
-  while (s[length] != '\0') {
+  while (string[length] != '\0') {
     length++;
   }
-  return (s8){(uint8_t *)s, length};
+  return (s8){(uint8_t *)string, length};
 }
 
-void print_s8(s8 value) {
-  for (size_t i = 0; i < value.length; i++) {
-    printf("%c", value.data[i]);
+void print_s8(s8 string) {
+  for (size_t i = 0; i < string.length; i++) {
+    printf("%c", string.data[i]);
   }
 }
 
