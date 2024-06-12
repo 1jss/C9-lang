@@ -24,10 +24,10 @@ ANSI C keywords:
 | ~~unsigned~~ | void         | ~~volatile~~ | while      |
 
 Reasons:
-- Several keyowrds are removed as they are connected to discouraged or uncommon programming patterns (auto, continue, do, extern, goto, register, volatile). If you need any of these, use normal C99 instead.
+- Several keywords are removed as they are connected to discouraged or uncommon programming patterns (auto, continue, do, extern, goto, register, volatile). If you need any of these, use normal C99 instead.
 - Keywords connected to integer types of different sizes (char, int, long, short, signed, unsigned) are not allowed as they can vary between systems. Use `inttypes.h` or C9's `types.h` instead.
-- Switch case statements are removed as they are a common source of errors (fallthrough), require 4 keywords (switch, case, break, default) and can only handle matches of int and char. The switch case is replaced with if else statements.
-- Enums are removed as they are not type safe and can cause namespace collisions. Enums are replaced with constant structs.
+- Switch case statements are removed as they are a common source of errors (fallthrough), require 4 keywords (switch, case, break, default) and can only handle matches of int and char. Use if else statements instead.
+- Enums are removed as they are not type safe and can cause namespace collisions. Enums are replaced with constant structs (see `status.h` for an example).
 
 C99 keywords:
 
@@ -334,9 +334,10 @@ static int32_t add(int32_t a, int32_t b) {
 }
 ```
 
-- If you need to return an array - do it inside a struct.
+- If you need to return an array - do it inside a struct or use C9's `array.h`. 
 
 ```C
+// Fixed array in a struct
 typedef struct {
   int32_t value[2];
 } result_t;
@@ -347,6 +348,19 @@ static result_t addAndSubtract(int32_t a, int32_t b) {
   result.value[1] = a - b;
   return result;
 }
+
+// Flexible C9 array
+#import "array.h"
+
+static Array *addAndSubtract(int32_t a, int32_t b) {
+  Array *result = array_create(arena, sizeof(int32_t));
+  int32_t a_plus_b = a + b;
+  int32_t a_minus_b = a - b;
+  array_push(result, &a_plus_b);
+  array_push(result, &a_minus_b);
+  return result;
+}
+
 ```
 
 ## Arrays

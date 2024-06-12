@@ -9,9 +9,8 @@
 #if 0
 
 Dynamic array implementation that has the following functions:
- - array_create: initializes the array and returns a pointer to it
- - array_create_width: initializes the array with a given index width and returns a pointer to it
- - array_destroy: frees all memory in the array
+ - array_create: initializes the array with an item size and returns a pointer to it
+ - array_create_width: initializes the array with an item size and a given index width and returns a pointer to it
  - array_push: adds an element to the array
  - array_pop: removes the last element from the array
  - array_get: returns the element at the given index
@@ -57,6 +56,7 @@ typedef struct {
   Arena *arena;
   IndexNode *index; // Index tree of all items
   size_t length;
+  size_t item_size;
   size_t index_width;
 } Array;
 
@@ -142,28 +142,31 @@ void *index_get(index_get_params params) {
   }
 }
 
-// Create a new array width a given index width and return a pointer to it
+// Create a new array width a given item size and index width and return a pointer to it
+// Item size is the size of each item in the array
 // Index width is the number of children each node can have.
 // The optimal value is determined by the number of items in the array.
-Array *array_create_width(Arena *arena, size_t index_width) {
-  Array *array = (Array *)arena_fill(arena, sizeof(Array));
-  array->arena = arena;
-  array->index = index_create(arena);
-  array->length = 0;
-  array->index_width = index_width;
-  return array;
+Array *array_create_width(Arena *arena, size_t item_size, size_t index_width) {
+  Array *new_array = (Array *)arena_fill(arena, sizeof(Array));
+  new_array->arena = arena;
+  new_array->index = index_create(arena);
+  new_array->length = 0;
+  new_array->item_size = item_size;
+  new_array->index_width = index_width;
+  return new_array;
 }
 
 // Create a new default array and return a pointer to it
-Array *array_create(Arena *arena) {
-  return array_create_width(arena, DEFAULT_INDEX_WIDTH);
+Array *array_create(Arena *arena, size_t item_size) {
+  return array_create_width(arena, item_size, DEFAULT_INDEX_WIDTH);
 }
 
 // Copy data onto the array and add it to the last position
-void array_push(Array *array, void *data, size_t data_size) {
-  void *item = arena_fill(array->arena, data_size);
+// The data has to be pushed by reference as that's the only type agnostic way to pass values
+void array_push(Array *array, void *data) {
+  void *item = arena_fill(array->arena, array->item_size);
   if (item == 0) return; // Allocation failed
-  memcpy(item, data, data_size);
+  memcpy(item, data, array->item_size);
 
   // Add the item to the index
   index_set_params set_params = {
@@ -178,6 +181,7 @@ void array_push(Array *array, void *data, size_t data_size) {
 }
 
 // Get the data from the last item and remove it from the array
+// The data has to be returned by reference as that's the only type agnostic way to return a value
 void *array_pop(Array *array) {
   if (array->length == 0) return 0; // No items to pop
   array->length -= 1;
@@ -211,11 +215,11 @@ void *array_get(Array *array, size_t index) {
 }
 
 // Set the data at the given index starting from 0
-void array_set(Array *array, size_t index, void *data, size_t data_size) {
+void array_set(Array *array, size_t index, void *data) {
   if (index >= array->length) return;
-  void *item = arena_fill(array->arena, data_size);
+  void *item = arena_fill(array->arena, array->item_size);
   if (item == 0) return; // Allocation failed
-  memcpy(item, data, data_size);
+  memcpy(item, data, array->item_size);
   index_set_params set_params = {
     .arena = array->arena,
     .indexNode = array->index,

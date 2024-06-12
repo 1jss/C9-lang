@@ -2,12 +2,12 @@
 
 #include <stdio.h> // printf, size_t
 
-#include "arena.h" // Arena, arena_open, arena_fill, arena_size, arena_capacity, arena_reset, arena_close
-#include "array.h" // Array, array_create, array_push, array_pop, array_get, array_set, array_length, array_last
-#include "types.h" // i32, f32, bool
+#include "arena.h"       // Arena, arena_open, arena_fill, arena_size, arena_capacity, arena_reset, arena_close
+#include "array.h"       // Array, array_create, array_push, array_pop, array_get, array_set, array_length, array_last
+#include "status.h"      // status
+#include "string.h"      // s8, to_s8, print_s8, concat_s8, includes_s8, replace_s8, replaceall_s8
+#include "types.h"       // i32, f32, bool
 #include "types_print.h" // print_f32, print_i32
-#include "string.h" // s8, to_s8, print_s8, concat_s8, includes_s8, replace_s8, replaceall_s8
-#include "status.h" // status
 
 #if 0
 This is a comment
@@ -141,23 +141,23 @@ i32 main(void) {
   // test the array functions
 
   Arena *array_arena = arena_open(1024);
-  Array *array = array_create(array_arena);
+  Array *array = array_create(array_arena, sizeof(i32));
 
   i32 a = 10;
   i32 b = 20;
   i32 c = 30;
 
   for (i32 i = 0; i < 5; i++) {
-    array_push(array, &a, sizeof(i32));
-    array_push(array, &b, sizeof(i32));
-    array_push(array, &c, sizeof(i32));
+    array_push(array, &a);
+    array_push(array, &b);
+    array_push(array, &c);
   }
 
   printf("Array length: %zu\n", array_length(array));
 
   // set value at last index
   i32 d = 40;
-  array_set(array, array_last(array), &d, sizeof(i32));
+  array_set(array, array_last(array), &d);
 
   // find item with value 40
   size_t index = 0;
@@ -179,8 +179,8 @@ i32 main(void) {
   printf("Array length after pop: %zu\n", array_length(array));
 
   // Push some more values
-  array_push(array, &a, sizeof(i32));
-  array_push(array, &b, sizeof(i32));
+  array_push(array, &a);
+  array_push(array, &b);
 
   printf("Array length after push: %zu\n", array_length(array));
 
