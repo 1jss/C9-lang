@@ -7,6 +7,7 @@ AlignAfterOpenBracket: BlockIndent
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignEscapedNewlines: DontAlign
+AlignTrailingComments: Leave
 AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: true
@@ -28,6 +29,7 @@ BraceWrapping:
   BeforeElse: false
   IndentBraces: false
 BreakBeforeTernaryOperators: true
+IncludeBlocks: Merge
 ReflowComments: false
 SortIncludes: true
 SpaceBeforeParens: ControlStatements

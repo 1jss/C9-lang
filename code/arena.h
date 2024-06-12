@@ -1,7 +1,7 @@
 #ifndef C9_ARENA
 
 #include <inttypes.h> // uint8_t, int32_t, int64_t, uint32_t, uint64_t
-#include <stdlib.h>   // malloc, free, size_t
+#include <stdlib.h> // malloc, free, size_t
 
 #if 0
 

@@ -1,10 +1,9 @@
 #ifndef C9_TYPES_PRINT
 
-#include <stdio.h> // printf
-
-#include "types.h" // i8, i16, i32, i64, u8, u16, u32, u64, f32, f64
-#include <stdbool.h>  // bool
 #include <inttypes.h> // PRId8, PRId16, PRId32, PRId64, PRIu8, PRIu16, PRIu32, PRIu64
+#include <stdbool.h> // bool
+#include <stdio.h> // printf
+#include "types.h" // i8, i16, i32, i64, u8, u16, u32, u64, f32, f64
 
 #if 0
 

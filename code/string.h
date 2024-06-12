@@ -1,10 +1,9 @@
 #ifndef C9_STRING
 
 #include <inttypes.h> // uint8_t
-#include <stdbool.h>  // bool
-#include <stddef.h>   // size_t
-#include <stdio.h>    // printf
-
+#include <stdbool.h> // bool
+#include <stddef.h> // size_t
+#include <stdio.h> // printf
 #include "arena.h" // Arena
 
 #if 0
