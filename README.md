@@ -365,15 +365,20 @@ static Array *addAndSubtract(int32_t a, int32_t b) {
 
 ## Arrays
 
-- Variable length arrays are not allowed.
+- Variable length arrays are not allowed use fixed length arrays or C9's `array.h` instead
   
 ```C
 // Not allowed
 int32_t n = 10;
-int32_t array[n];
+int32_t array_name[n];
 
 // Allowed
-int32_t array[10];
+int32_t array_name[10];
+
+// Allowed
+#include "array.h"
+Array *array_name = array_create(arena, sizeof(int32_t));
+
 ```
 
 ## Pointers
@@ -391,7 +396,7 @@ int32_t value = 0;
 function(value);
 ```
 
-- Function pointers are discouraged. Typedef them if used.
+- Function pointers are allowed but discouraged. Typedef them if used.
 
 ```C
 // Discouraged
@@ -430,7 +435,6 @@ int32_t *other_heap_value = arena_fill(arena_name, sizeof(int32_t));
 arena_close(arena_name);
 
 ```
-
 
 - Freeing in the same scope as the allocation is mandatory.
 
@@ -478,7 +482,7 @@ free(array);
 ```C
 // Allowed
 #ifndef FILENAME_H
-...
+...header code...
 #define FILENAME_H
 #endif
 ```
@@ -546,7 +550,7 @@ if ((a == 1) && b) {
 - Include statements should be followed by a comment with the function or type that is being included. These can be tested by running the `include_check.py` script in the `code` folder.
 
 ```C
-#include <stdio.h>  // printf
+#include <stdio.h> // printf
 #include <stdlib.h> // malloc, free
 ```
 
@@ -559,7 +563,7 @@ python3 lint.py test.c
 
 ## Code style
 - Use 2 spaces for indentation. Tabs are not allowed.
-- Clang format: `{ BasedOnStyle: Google, IndentWidth: 2, ContinuationIndentWidth: 2, ColumnLimit: 0, SpacesBeforeTrailingComments: 1, AlignAfterOpenBracket: BlockIndent }`
+- Format code with clang-format using the configuration file in the `code` folder.
 
 ## Compiling
 To compile C9 code, use the following flags:
