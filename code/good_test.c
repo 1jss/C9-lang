@@ -207,7 +207,7 @@ i32 main(void) {
   print_s8(replaced_hello);
   printf(" %zu\n", replaced_hello.length);
 
-  s8 all_replaced = replaceall_s8(string_arena, replaced_hello, to_s8("l"), to_s8("j"));
+  s8 all_replaced = replace_s8(string_arena, replaced_hello, to_s8("l"), to_s8("j"));
   print_s8(all_replaced);
 
   arena_close(string_arena);

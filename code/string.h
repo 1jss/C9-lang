@@ -17,9 +17,7 @@ This header defines a string type and helper functions for it. The string type i
 - includes_s8: a function that finds a substring in an s8
 - concat_s8: a function that concatenates two s8 strings
 - concat3_s8: a function that concatenates three s8 strings
-- copy_s8: a function that creates a copy of an s8 string
-- replace_s8: a function that replaces the first occurance substring in an s8 string
-- replaceall_s8: a function that replaces all occurrences of a substring in an s8 string
+- replace_s8: a function that replaces all occurrences of a substring in an s8 string
 
 #endif
 
@@ -86,8 +84,8 @@ s8 concat_s8(Arena *arena, s8 a, s8 b) {
   return (s8){data, total_length};
 }
 
-// Concatenate three strings
-s8 concat3_s8(Arena *arena, s8 a, s8 b, s8 c) {
+// Concatenate three strings (for internal use only)
+static s8 concat3_s8(Arena *arena, s8 a, s8 b, s8 c) {
   size_t total_length = a.length + b.length + c.length;
   uint8_t *data = (uint8_t *)arena_fill(arena, total_length);
   for (size_t i = 0; i < a.length; i++) {
@@ -105,29 +103,7 @@ s8 concat3_s8(Arena *arena, s8 a, s8 b, s8 c) {
   };
 }
 
-s8 copy_s8(Arena *arena, s8 source) {
-  uint8_t *data = (uint8_t *)arena_fill(arena, source.length);
-  for (size_t i = 0; i < source.length; i++) {
-    data[i] = source.data[i];
-  }
-  return (s8){data, source.length};
-}
-
 s8 replace_s8(Arena *arena, s8 source, s8 target, s8 replacement) {
-  size_t index = indexof_s8(source, target);
-  if (index == INVALID_STRING_INDEX) return source;
-  s8 prefix = {
-    .data = source.data,
-    .length = index
-  };
-  s8 suffix = {
-    .data = source.data + index + target.length,
-    .length = source.length - index - target.length
-  };
-  return concat3_s8(arena, prefix, replacement, suffix);
-}
-
-s8 replaceall_s8(Arena *arena, s8 source, s8 target, s8 replacement) {
   size_t index = indexof_s8(source, target);
   if (index == INVALID_STRING_INDEX) return source;
   s8 prefix = {
@@ -138,7 +114,7 @@ s8 replaceall_s8(Arena *arena, s8 source, s8 target, s8 replacement) {
     .data = source.data + index + target.length,
     .length = source.length - index - target.length
   };
-  s8 suffix = replaceall_s8(arena, rest, target, replacement);
+  s8 suffix = replace_s8(arena, rest, target, replacement);
   return concat3_s8(arena, prefix, replacement, suffix);
 }
 

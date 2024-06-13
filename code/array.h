@@ -60,7 +60,7 @@ typedef struct {
 } Array;
 
 // Create a new index node and return a pointer to it
-IndexNode *index_create(Arena *arena) {
+static IndexNode *index_create(Arena *arena) {
   IndexNode *index = (IndexNode *)arena_fill(arena, sizeof(IndexNode));
   index->children = 0;
   index->item = 0;
@@ -76,7 +76,7 @@ typedef struct {
 } index_set_params;
 
 // Set item at the given index
-void index_set(index_set_params params) {
+static void index_set(index_set_params params) {
   // If the indexNode is 0 there is nothing to add to
   if (params.indexNode == 0) {
     return;
@@ -90,13 +90,14 @@ void index_set(index_set_params params) {
   else {
     size_t digit = params.index % params.index_width;
     size_t next_index = params.index / params.index_width;
-    // If the child node does not exist, create it
+    // If the children node does not exist, create it
     if (params.indexNode->children == 0) {
       params.indexNode->children = (IndexNode **)arena_fill(params.arena, params.index_width * sizeof(IndexNode *));
       for (size_t i = 0; i < params.index_width; i++) {
         params.indexNode->children[i] = 0;
       }
     }
+    // If the child indexNode at position digit does not exist, create it
     if (params.indexNode->children[digit] == 0) {
       params.indexNode->children[digit] = index_create(params.arena);
     }
@@ -119,7 +120,7 @@ typedef struct {
 } index_get_params;
 
 // Get the item at the given index
-void *index_get(index_get_params params) {
+static void *index_get(index_get_params params) {
   // If the indexNode is 0 there is nothing to get from
   if (params.indexNode == 0) {
     return 0;
@@ -235,6 +236,7 @@ size_t array_length(Array *array) {
 }
 
 // Get last index of the array
+// Warning! This returns a huge number (INVALID_ARRAY_INDEX) if the array is empty, as size_t can't be negative.
 size_t array_last(Array *array) {
   // If the array is empty
   if (array->length == 0) return INVALID_ARRAY_INDEX;
