@@ -37,11 +37,17 @@ typedef struct {
 
 static ReturnDataType divide(TestStruct props) {
   if (props.b == 0) {
-    ReturnDataType data = {.status = status.ERROR, .error_message = to_s8("Division by zero")};
+    ReturnDataType data = {
+      .status = status.ERROR,
+      .error_message = to_s8("Division by zero")
+    };
     return data;
   }
   f32 value = (f32)props.a / (f32)props.b;
-  ReturnDataType data = {.status = status.OK, .result = value};
+  ReturnDataType data = {
+    .status = status.OK,
+    .result = value
+  };
   return data;
 }
 
@@ -62,7 +68,10 @@ static TestStruct swap(TestStruct props) {
 }
 
 static RectangleType createRectangle(TestStruct props) {
-  RectangleType rectangle = {.width = props.a, .height = props.b};
+  RectangleType rectangle = {
+    .width = props.a,
+    .height = props.b
+  };
   return rectangle;
 }
 
