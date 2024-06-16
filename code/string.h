@@ -4,7 +4,7 @@
 #include <stdbool.h> // bool
 #include <stddef.h> // size_t
 #include <stdio.h> // printf
-#include "arena.h" // Arena
+#include "arena.h" // Arena, arena_fill
 
 #if 0
 
@@ -29,7 +29,7 @@ typedef struct {
 } s8;
 
 s8 to_s8(char *string) {
-  uint32_t length = 0;
+  size_t length = 0;
   while (string[length] != '\0') {
     length++;
   }

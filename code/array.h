@@ -1,9 +1,8 @@
 #ifndef C9_ARRAY
 
-#include <math.h> // log2, ceil, pow
 #include <stdlib.h> // size_t
 #include <string.h> // memcpy
-#include "arena.h" // Arena, arena_open, arena_fill, arena_close
+#include "arena.h" // Arena, arena_fill
 
 #if 0
 
