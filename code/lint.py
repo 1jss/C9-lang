@@ -13,12 +13,7 @@ def lint(filename):
 
             # Rule: 'goto' is not allowed at all
             if re.search(r'\ goto\ ', line):
-                print(f'{filename}:{line_num}: Warning: Found goto')
-
-            # Rule: 'const' is not allowed in local scope (inside functions)
-            # If const is preceded by more than one space it is probably not in global scope
-            if re.search(r'\ +\ +const\ ', line):
-                print(f'{filename}:{line_num}: Warning: Found const in local scope')  
+                print(f'{filename}:{line_num}: Warning: Found goto')  
 
             # Rule: No built in integer types are allowed as they can vary in size. Use `inttypes.h` instead.
             if re.search(r'\ (int|short|long)\ ', line):
