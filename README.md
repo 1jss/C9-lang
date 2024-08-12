@@ -7,9 +7,6 @@ The purpose of C9 is to create a learnable, portable and readable programming la
 ## Keywords
 All C99 keywords are reserved in C9, but many are not allowed.
 
-Some keywords are only allowed in specific contexts:
-- `const` is not allowed in local scope (inside functions)
-
 ANSI C keywords:
 
 |              |              |              |            |
@@ -22,6 +19,9 @@ ANSI C keywords:
 | ~~short~~    | ~~signed~~   | sizeof       | static     |
 | struct       | ~~switch~~   | typedef      | union      |
 | ~~unsigned~~ | void         | ~~volatile~~ | while      |
+
+Some keywords are only allowed in specific contexts:
+- `const` is not allowed in local scope (inside functions)
 
 Reasons:
 - Several keywords are removed as they are connected to discouraged or uncommon programming patterns (auto, continue, do, extern, goto, register, volatile). If you need any of these, use normal C99 instead.
@@ -167,7 +167,16 @@ int32_t getA(void) {
 }
 ```
 
-- Names of structs and unions must be unique
+- The comma operator is not allowed for inline variable declarations. Each variable must be declared on a separate line.
+
+```C
+// Not allowed
+int32_t a = 0, b = 1;
+
+// Allowed
+int32_t a = 0;
+int32_t b = 1;
+```
 
 ## Structs
 
@@ -175,8 +184,8 @@ int32_t getA(void) {
 
 ```C
 typedef struct {
-  int32_t: width;
-  int32_t: height;
+  int32_t width;
+  int32_t height;
 } RectangleType;
 ```
 
@@ -187,7 +196,10 @@ typedef struct {
 RectangleType rectangle = { 10, 20 };
 
 // Encouraged
-RectangleType rectangle = { .width = 10, .height = 20 };
+RectangleType rectangle = {
+  .width = 10,
+  .height = 20
+};
 ```
 
 - Do not use flexible array members in structs
@@ -197,7 +209,6 @@ typedef struct {
   int32_t width;
   int32_t height;
   int32_t data[]; // <- Not allowed
-
 } RectangleType;
 ```
 
@@ -218,7 +229,7 @@ typedef struct {
 } RectangleType;
 ```
 
-- Use title case for struct names
+- Prefer title case for struct names
 
 ```C
 // Discouraged
@@ -260,8 +271,9 @@ const ColorType colors = {
 };
 
 int32_t color = colors.RED;
-
 ```
+
+- Names of structs and unions must be unique
 
 ## Functions
 
@@ -296,25 +308,17 @@ int32_t foo(void) {
 }
 ```
 
-- Prefer initalizing functions as static except main
-
-```C
-static int32_t add(int32_t a, int32_t b) {
-  return a + b;
-}
-```
-
 - Prefer passing variables by value instead of reference
 
 ```C
 // Discouraged
-static void add(int32_t *a, int32_t *b) {
+void add(int32_t *a, int32_t *b) {
   int32_t result = *a + *b;
   return result;
 }
 
 // Encouraged
-static int32_t add(int32_t a, int32_t b) {
+int32_t add(int32_t a, int32_t b) {
   int32_t result = a + b;
   return result;
 }
@@ -324,12 +328,12 @@ Return values or structs from functions instead of assigning to result pointers
 
 ```C
 // Discouraged
-static void add(int32_t a, int32_t b, int32_t *result) {
+void add(int32_t a, int32_t b, int32_t *result) {
   *result = a + b;
 }
 
 // Encouraged
-static int32_t add(int32_t a, int32_t b) {
+int32_t add(int32_t a, int32_t b) {
   return a + b;
 }
 ```
@@ -340,10 +344,10 @@ static int32_t add(int32_t a, int32_t b) {
 // Fixed array in a struct
 typedef struct {
   int32_t value[2];
-} result_t;
+} ResultType;
 
-static result_t addAndSubtract(int32_t a, int32_t b) {
-  result_t result;
+ResultType addAndSubtract(int32_t a, int32_t b) {
+  ResultType result = {0};
   result.value[0] = a + b;
   result.value[1] = a - b;
   return result;
@@ -352,7 +356,7 @@ static result_t addAndSubtract(int32_t a, int32_t b) {
 // Flexible C9 array
 #import "array.h"
 
-static Array *addAndSubtract(int32_t a, int32_t b) {
+Array *addAndSubtract(int32_t a, int32_t b) {
   Array *result = array_create(arena, sizeof(int32_t));
   int32_t a_plus_b = a + b;
   int32_t a_minus_b = a - b;
@@ -517,20 +521,6 @@ Reasons:
 Reasons:
 - `/* */` comments are not nestable
 
-
-## Operators
-
-- The comma operator is not allowed for inline variable declarations. Each variable must be declared on a separate line.
-
-```C
-// Not allowed
-int32_t a = 0, b = 1;
-
-// Allowed
-int32_t a = 0;
-int32_t b = 1;
-```
-
 ## Operands
 - The operands of the && and || operators must be surrounded by parentheses unless they are simple variables or constants.
 
@@ -547,7 +537,7 @@ if ((a == 1) && b) {
 ```
 
 ## Includes
-- Include statements should be followed by a comment with the function or type that is being included. These can be tested by running the `include_check.py` script in the `code` folder.
+- Include statements should be followed by a comment with the function or type that is being included. These can be rudimentally tested by running the `include_check.py` script in the `code` folder.
 
 ```C
 #include <stdio.h> // printf
