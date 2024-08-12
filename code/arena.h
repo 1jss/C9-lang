@@ -39,7 +39,7 @@ Arena *arena_open(size_t size) {
   return arena;
 }
 
-// arena_fill: allocates memory in the arena and returns a pointer to it
+// arena_fill allocates memory in the arena and returns a pointer to it
 void *arena_fill(Arena *arena, size_t size) {
   // If size is larger than 4, align to 8 bytes
   int8_t align_to = size > 4 ? 8 : 4;
