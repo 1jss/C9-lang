@@ -36,6 +36,10 @@ s8 to_s8(char *string) {
   return (s8){(uint8_t *)string, length};
 }
 
+char *to_char(s8 string) {
+  return (char *)(string.data);
+}
+
 void print_s8(s8 string) {
   for (size_t i = 0; i < string.length; i++) {
     printf("%c", string.data[i]);
