@@ -76,6 +76,8 @@ i32 c = 0;
 i64 d = 0;
 ```
 
+> A valid exception to this rule is when an external library requires a specific type, say a `char *` for passing text.
+
 - Implicit ints are not used nor allowed.
 
 ```C
