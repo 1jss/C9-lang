@@ -1,7 +1,7 @@
 #ifndef C9_ARENA
 
-#include <inttypes.h> // uint8_t, int32_t, int64_t, uint32_t, uint64_t
-#include <stdlib.h> // malloc, free, size_t
+#include <stdlib.h> // malloc, free
+#include "types.h" // u8, i32
 
 #if 0
 
@@ -19,31 +19,31 @@ When freeing an arena it will also free all sub-arenas. This encourages the use 
 
 #endif
 
-// Set MAX_ARENA_SIZE to the smallest of maximum size_t or 1GB
-const size_t MAX_ARENA_SIZE = (size_t)-1 < 1024 * 1024 * 1024 ? (size_t)-1 : 1024 * 1024 * 1024;
+// Set MAX_ARENA_SIZE to 1GB
+const i32 MAX_ARENA_SIZE = 1024 * 1024 * 1024;
 
 typedef struct Arena {
-  uint8_t *data;
-  size_t head;
-  size_t capacity;
+  u8 *data;
+  i32 head;
+  i32 capacity;
   struct Arena *next;
 } Arena;
 
 // arena_open creates a new arena with a size and returns a pointer to it
-Arena *arena_open(size_t size) {
+Arena *arena_open(i32 size) {
   Arena *arena = (Arena *)malloc(sizeof(Arena));
-  arena->data = (uint8_t *)malloc(size);
+  arena->data = (u8 *)malloc(size);
   arena->head = 0;
   arena->capacity = size;
   arena->next = 0;
   return arena;
 }
 
-// arena_fill allocates memory in the arena and returns a pointer to it
-void *arena_fill(Arena *arena, size_t size) {
+// arena_fill: allocates memory in the arena and returns a pointer to it
+void *arena_fill(Arena *arena, i32 size) {
   // If size is larger than 4, align to 8 bytes
-  int8_t align_to = size > 4 ? 8 : 4;
-  size_t aligned_head = arena->head;
+  u8 align_to = size > 4 ? 8 : 4;
+  i32 aligned_head = arena->head;
   if (aligned_head % align_to != 0) {
     aligned_head = aligned_head + align_to - (aligned_head % align_to);
   }
@@ -88,7 +88,7 @@ void arena_reset(Arena *arena) {
 }
 
 // arena_size: returns the used size of the arena and all sub-arenas
-size_t arena_size(Arena *arena) {
+i32 arena_size(Arena *arena) {
   if (arena->next == 0) {
     return arena->head;
   }
@@ -96,7 +96,7 @@ size_t arena_size(Arena *arena) {
 }
 
 // arena_capacity: returns the total capacity of the arena and all sub-arenas
-size_t arena_capacity(Arena *arena) {
+i32 arena_capacity(Arena *arena) {
   if (arena->next == 0) {
     return arena->capacity;
   }

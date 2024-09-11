@@ -1,8 +1,8 @@
 #ifndef C9_ARRAY
 
-#include <stdlib.h> // size_t
 #include <string.h> // memcpy
 #include "arena.h" // Arena, arena_fill
+#include "types.h" // i32
 
 #if 0
 
@@ -41,8 +41,8 @@ The array index is stored in an arena allocator to allow for fast allocation and
 
 #endif
 
-const size_t DEFAULT_INDEX_WIDTH = 16;
-const size_t INVALID_ARRAY_INDEX = -1;
+const i32 DEFAULT_INDEX_WIDTH = 16;
+const i32 INVALID_ARRAY_INDEX = -1;
 
 typedef struct IndexNode IndexNode;
 struct IndexNode {
@@ -53,9 +53,9 @@ struct IndexNode {
 typedef struct {
   Arena *arena;
   IndexNode *index; // Index tree of all items
-  size_t length;
-  size_t item_size;
-  size_t index_width;
+  i32 length;
+  i32 item_size;
+  i32 index_width;
 } Array;
 
 // Create a new index node and return a pointer to it
@@ -69,8 +69,8 @@ static IndexNode *index_create(Arena *arena) {
 typedef struct {
   Arena *arena;
   IndexNode *indexNode;
-  size_t index;
-  size_t index_width;
+  i32 index;
+  i32 index_width;
   void *item;
 } index_set_params;
 
@@ -87,12 +87,12 @@ static void index_set(index_set_params params) {
   }
   // Otherwise we need to go deeper into the tree
   else {
-    size_t digit = params.index % params.index_width;
-    size_t next_index = params.index / params.index_width;
+    i32 digit = params.index % params.index_width;
+    i32 next_index = params.index / params.index_width;
     // If the children node does not exist, create it
     if (params.indexNode->children == 0) {
       params.indexNode->children = (IndexNode **)arena_fill(params.arena, params.index_width * sizeof(IndexNode *));
-      for (size_t i = 0; i < params.index_width; i++) {
+      for (i32 i = 0; i < params.index_width; i++) {
         params.indexNode->children[i] = 0;
       }
     }
@@ -114,8 +114,8 @@ static void index_set(index_set_params params) {
 
 typedef struct {
   IndexNode *indexNode;
-  size_t index;
-  size_t index_width;
+  i32 index;
+  i32 index_width;
 } index_get_params;
 
 // Get the item at the given index
@@ -130,8 +130,8 @@ static void *index_get(index_get_params params) {
   }
   // Otherwise we need to go deeper
   else {
-    size_t digit = params.index % params.index_width;
-    size_t next_index = params.index / params.index_width;
+    i32 digit = params.index % params.index_width;
+    i32 next_index = params.index / params.index_width;
     index_get_params next_params = {
       .indexNode = params.indexNode->children[digit],
       .index = next_index,
@@ -145,7 +145,7 @@ static void *index_get(index_get_params params) {
 // Item size is the size of each item in the array
 // Index width is the number of children each node can have.
 // The optimal value is determined by the number of items in the array.
-Array *array_create_width(Arena *arena, size_t item_size, size_t index_width) {
+Array *array_create_width(Arena *arena, i32 item_size, i32 index_width) {
   Array *new_array = (Array *)arena_fill(arena, sizeof(Array));
   new_array->arena = arena;
   new_array->index = index_create(arena);
@@ -156,7 +156,7 @@ Array *array_create_width(Arena *arena, size_t item_size, size_t index_width) {
 }
 
 // Create a new default array and return a pointer to it
-Array *array_create(Arena *arena, size_t item_size) {
+Array *array_create(Arena *arena, i32 item_size) {
   return array_create_width(arena, item_size, DEFAULT_INDEX_WIDTH);
 }
 
@@ -203,8 +203,8 @@ void *array_pop(Array *array) {
 }
 
 // Get the data at the given index starting from 0
-void *array_get(Array *array, size_t index) {
-  if (index >= array->length) return 0;
+void *array_get(Array *array, i32 index) {
+  if (index < 0 || index >= array->length) return 0;
   index_get_params get_params = {
     .indexNode = array->index,
     .index = index,
@@ -214,7 +214,7 @@ void *array_get(Array *array, size_t index) {
 }
 
 // Set the data at the given index starting from 0
-void array_set(Array *array, size_t index, void *data) {
+void array_set(Array *array, i32 index, void *data) {
   if (index >= array->length) return;
   void *item = arena_fill(array->arena, array->item_size);
   if (item == 0) return; // Allocation failed
@@ -230,16 +230,21 @@ void array_set(Array *array, size_t index, void *data) {
 }
 
 // Return the used size of the array
-size_t array_length(Array *array) {
+i32 array_length(Array *array) {
   return array->length;
 }
 
 // Get last index of the array
-// Warning! This returns a huge number (INVALID_ARRAY_INDEX) if the array is empty, as size_t can't be negative.
-size_t array_last(Array *array) {
+// This returns -1 if the array is empty
+i32 array_last(Array *array) {
   // If the array is empty
   if (array->length == 0) return INVALID_ARRAY_INDEX;
   return array->length - 1;
+}
+
+void array_clear(Array *array) {
+  array->length = 0;
+  array->index = index_create(array->arena);
 }
 
 #define C9_ARRAY

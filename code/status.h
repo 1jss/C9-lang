@@ -1,6 +1,6 @@
 #ifndef C9_STATUS
 
-#include <inttypes.h> // int32_t
+#include "types.h" // i32
 
 #if 0
 
@@ -22,8 +22,8 @@ int32_t my_function(void) {
 #endif
 
 typedef struct {
-  int32_t OK;
-  int32_t ERROR;
+  i32 OK;
+  i32 ERROR;
 } StatusType;
 
 const StatusType status = {

@@ -1,6 +1,6 @@
 // This is a test file for the C9 linter to make sure it doesn't throw any errors on valid C9 code
 
-#include <stdio.h> // printf, size_t
+#include <stdio.h> // printf
 #include "arena.h" // Arena, arena_open, arena_fill, arena_size, arena_capacity, arena_reset, arena_close
 #include "array.h" // Array, array_create, array_push, array_pop, array_get, array_set, array_length, array_last
 #include "status.h" // status
@@ -75,6 +75,12 @@ static RectangleType createRectangle(TestStruct props) {
   return rectangle;
 }
 
+void print_s8(s8 string) {
+  for (i32 i = 0; i < string.length; i++) {
+    printf("%c", string.data[i]);
+  }
+}
+
 i32 main(void) {
   TestStruct test_struct = {
     .a = 10,
@@ -121,8 +127,8 @@ i32 main(void) {
   printf("Rectangle width: %d, height: %d\n", rectangle.width, rectangle.height);
 
   Arena *arena = arena_open(12); // Intentionally small arena for testing growth
-  printf("Arena size: %zu\n", arena_size(arena));
-  printf("Arena capacity: %zu\n", arena_capacity(arena));
+  printf("Arena size: %d\n", arena_size(arena));
+  printf("Arena capacity: %d\n", arena_capacity(arena));
 
   TestStruct *arena_data = arena_fill(arena, sizeof(TestStruct));
   if (arena_data == 0) {
@@ -137,12 +143,12 @@ i32 main(void) {
   }
 
   *arena_data = test_struct;
-  printf("Arena size after fill: %zu\n", arena_size(arena));
-  printf("Arena capacity after fill: %zu\n", arena_capacity(arena));
+  printf("Arena size after fill: %d\n", arena_size(arena));
+  printf("Arena capacity after fill: %d\n", arena_capacity(arena));
 
   arena_reset(arena);
-  printf("Arena size after reset: %zu\n", arena_size(arena));
-  printf("Arena capacity after reset: %zu\n\n", arena_capacity(arena));
+  printf("Arena size after reset: %d\n", arena_size(arena));
+  printf("Arena capacity after reset: %d\n\n", arena_capacity(arena));
 
   arena_close(arena);
 
@@ -161,19 +167,19 @@ i32 main(void) {
     array_push(array, &c);
   }
 
-  printf("Array length: %zu\n", array_length(array));
+  printf("Array length: %d\n", array_length(array));
 
   // set value at last index
   i32 d = 40;
   array_set(array, array_last(array), &d);
 
   // find item with value 40
-  size_t index = 0;
+  i32 index = 0;
   bool found = false;
   while (index <= array_last(array) && !found) {
     i32 *value = (i32 *)array_get(array, index);
     if (value != 0 && *value == 40) {
-      printf("Found value 40 at index: %zu\n", index);
+      printf("Found value 40 at index: %d\n", index);
       found = true;
     }
     index++;
@@ -184,16 +190,16 @@ i32 main(void) {
     printf("Poped value: %d\n", *value);
   }
 
-  printf("Array length after pop: %zu\n", array_length(array));
+  printf("Array length after pop: %d\n", array_length(array));
 
   // Push some more values
   array_push(array, &a);
   array_push(array, &b);
 
-  printf("Array length after push: %zu\n", array_length(array));
+  printf("Array length after push: %d\n", array_length(array));
 
-  printf("Array arena storage: %zu\n", arena_size(array_arena));
-  printf("Array arena capacity: %zu\n", arena_capacity(array_arena));
+  printf("Array arena storage: %d\n", arena_size(array_arena));
+  printf("Array arena capacity: %d\n", arena_capacity(array_arena));
 
   arena_close(array_arena);
 
@@ -214,7 +220,7 @@ i32 main(void) {
   s8 replaced_hello = replace_s8(string_arena, hello_world, to_s8("loWo"), to_s8("lo wo"));
 
   print_s8(replaced_hello);
-  printf(" %zu\n", replaced_hello.length);
+  printf(" %d\n", replaced_hello.length);
 
   s8 all_replaced = replace_s8(string_arena, replaced_hello, to_s8("l"), to_s8("j"));
   print_s8(all_replaced);
