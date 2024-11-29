@@ -1,5 +1,5 @@
 # C9 lang
-C9 is a subset of the C99 programing language with opinionated coding style.
+C9 is a beginner friendly subset of the C99 programing language with opinionated coding style.
 
 ## Purpose
 The purpose of C9 is to create a learnable, portable and readable programming language that can be compiled on existing C99 compilers. It does this by limiting the number of keywords, types and features available in the language as well as promoting a set of opinionated coding styles. The intention is to make a small (*learnable*) language that can be compiled on many different (desktop) systems (*portable*) in a standardised style that makes the code easy to understand (*readable*).
@@ -10,6 +10,213 @@ The purpose of C9 is to create a learnable, portable and readable programming la
 - **Learnable**: Should be beginner friendly. Include only a very small amount of keywords.
 - **Portable**: Should compile on any existing C99 compiler. No build system or external libraries required.
 - **Readable**: The language should have a standardised coding style.
+
+# Introduction
+C9 is a compiled programming language based on C.
+
+## Compiling
+C9 can be compiled on any existing C99 compatible compiler such as **GCC** or **Clang**.
+
+### GCC:
+`gcc -std=c99 -Wall -Wextra -Werror -O2 -std=c99 -pedantic main.c -o main`
+
+### Clang:
+`clang -std=c99 -Wall -Wextra main.c -o main`
+
+## Types
+C9 is a typed language and uses the types defined in `types.h` which is included in the `code` folder. These are:
+
+| Type    | Description             |
+| ------- | ----------------------- |
+| i8      | 8 bit signed integer    |
+| i16     | 16 bit signed integer   |
+| i32     | 32 bit signed integer   |
+| i64     | 64 bit signed integer   |
+| u8      | 8 bit unsigned integer  |
+| u16     | 16 bit unsigned integer |
+| u32     | 32 bit unsigned integer |
+| u64     | 64 bit unsigned integer |
+| f32     | 32 bit floating point   |
+| f64     | 64 bit floating point   |
+
+
+## Comments
+C9 supports single line and multi line comments.
+
+```C
+// This is a single line comment
+
+/*
+This is a multi line comment
+*/
+```
+
+## Flow control
+C9 supports the following flow control statements:
+
+- `if` statement
+- `else` statement
+- `while` loop
+- `for` loop
+
+```C
+if (a == 1) {
+  printf("a is 1\n");
+} else if (a == 2) {
+  printf("a is 2\n");
+} else {
+  printf("a is not 1 or 2\n");
+}
+
+while (a < 10) {
+  printf("a is %d\n", a);
+  a++;
+}
+
+for (i32 i = 0; i < 10; i++) {
+  printf("i is %d\n", i);
+}
+```
+
+## Functions
+Functions are defined as follows:
+
+```C
+i32 add(i32 a, i32 b) {
+  return a + b;
+}
+```
+
+```
+Return type of the function. 
+|   Name of the function
+|   |   Parameters with their types
+|   |   |
+v   v   v  
+i32 add(i32 a, i32 b)
+```
+
+If a function does not return a value or takes no parameters use `void`, which is a type that represents nothing.
+
+```C
+void print_hello(void) {
+  printf("Hello, World!\n");
+}
+```
+
+## Variables
+Variables are defined as follows:
+
+```C
+i32 a = 0;
+```
+
+```
+The type of the variable.
+|   The name of the variable
+|   |   The value of the variable
+|   |   |
+v   v   v
+i32 a = 0;
+```
+
+- Each variable must be initiated with a value.
+- Each variable must be declared on a separate line.
+- Prefer using long variable names and avoid abbreviations.
+
+## Structs
+Structs are a way to group variables together. They are defined as follows:
+
+```C
+typedef struct {
+  i32 width;
+  i32 height;
+} RectangleType;
+```
+
+`RectangleType` is the name of the struct and `width` and `height` are the variables inside the struct. The RectangleType struct can now be used as a type in the program as follows:
+
+```C
+RectangleType my_rectangle = {
+  .width = 10,
+  .height = 20
+  };
+
+i32 area = my_rectangle.width * my_rectangle.height;
+```
+
+## Constants
+Constants are available in global scope and are defined as follows:
+
+```C
+const i32 MAX_ITERATIONS = 100;
+```
+
+Constants are not allowed in local scope (inside functions).
+
+## Arrays
+Arrays are defined as follows:
+
+```C
+i32 array[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+```
+
+The built in array type is fixed length. If you need a dynamic array, use the `Array` type from `array.h`.
+
+## Includes
+A header file is a file that contains definitions of functions and types that can be included in other files. To include a header file from your project directory, use double quotes.
+
+```C
+#import "types.h"
+```
+
+To include a system header file, use angle brackets.
+```C
+#include <stdio.h>
+```
+
+When including a header file, add a comment with the functions or types that are included and used from the header.
+
+```C
+#import "types.h" // i8, i32, u8
+#include <stdio.h> // printf
+```
+
+Note that C9 can use any C99 compatible libraries. Note, however that libraries that are not "header only" requires a different build command.
+
+## Pointers (references)
+A pointer is a reference to a variable's address in memory. 
+
+- Pointers are defined with a `*` before the variable name.
+- To get the address of a variable add `&` before the variable name.
+- To get the content of a reference add `*` before the reference.
+- To assign a value to a reference add `*` before the reference.
+
+```C
+i32 a = 10; // A normal variable
+i32 *a_reference = &a; // A pointer to a's address
+i32 b = *a_reference; // b is assigned a's content
+*a_reference = 20; // Assign 20 to the content of the address in a_reference
+```
+
+## Memory management
+Variables can be stored either on "the stack" or "the heap". The stack is a region of memory that is automatically used and released by the program. The heap is a region of memory that is manually used and released by the programmer.
+
+To use the stack, define the variable as usual:
+
+```C
+i32 a = 10;
+```
+
+To use the heap, use the `malloc` and `free` functions:
+
+```C
+i32 *a = malloc(sizeof(i32));
+*a = 10;
+free(a);
+```
+
+Manually allocating memory is the source of many bugs, so it is recommended to use the stack whenever possible. If you need to allocate memory on the heap, consider using the `arena.h` file in the `code` folder. This file contains functions for allocating memory on the heap in a safer way.
 
 # C9 and C99 comparison
 As C9 is a subset of the C99 programing language the following part is intended for someone that already knows C99 and wants to know what is missing in C9 and why.
