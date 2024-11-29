@@ -2,7 +2,17 @@
 C9 is a subset of the C99 programing language with opinionated coding style.
 
 ## Purpose
-The purpose of C9 is to create a learnable, portable and readable programming language that can be compiled on existing C99 compilers. It does this by limiting the number of keywords, types and features available in the language as well as promoting a set of opinionated coding styles.
+The purpose of C9 is to create a learnable, portable and readable programming language that can be compiled on existing C99 compilers. It does this by limiting the number of keywords, types and features available in the language as well as promoting a set of opinionated coding styles. The intention is to make a small (*learnable*) language that can be compiled on many different (desktop) systems (*portable*) in a standardised style that makes the code easy to understand (*readable*).
+
+*C9 is not intended to replace C99. If you already know C or come to a point where you need a keyword that is not available in C9, use C99 instead.*
+
+## Goals
+- **Learnable**: Should be beginner friendly. Include only a very small amount of keywords.
+- **Portable**: Should compile on any existing C99 compiler. No build system or external libraries required.
+- **Readable**: The language should have a standardised coding style.
+
+# C9 and C99 comparison
+As C9 is a subset of the C99 programing language the following part is intended for someone that already knows C99 and wants to know what is missing in C9 and why.
 
 ## Keywords
 All C99 keywords are reserved in C9, but many are not allowed.
@@ -24,10 +34,10 @@ Some keywords are only allowed in specific contexts:
 - `const` is not allowed in local scope (inside functions)
 
 Reasons:
-- Several keywords are removed as they are connected to discouraged or uncommon programming patterns (auto, continue, do, extern, goto, register, volatile). If you need any of these, use normal C99 instead.
-- Keywords connected to integer types of different sizes (char, int, long, short, signed, unsigned) are not allowed as they can vary between systems. Use `inttypes.h` or C9's `types.h` instead.
+- Several keywords are removed as they are connected to discouraged or uncommon programming patterns (auto, continue, do, extern, goto, register, volatile). If you need any of these, you are not the target audience for C9. Use the full C99 instead.
+- Keywords connected to integer types of different sizes (char, int, long, short, signed, unsigned) are removed as they can vary between systems. Use `inttypes.h` or C9's `types.h` instead. (Following the MISRA C recommendation)
 - Switch case statements are removed as they are a common source of errors (fallthrough), require 4 keywords (switch, case, break, default) and can only handle matches of int and char. Use if else statements instead.
-- Enums are removed as they are not type safe and can cause namespace collisions. Enums are replaced with constant structs (see `status.h` for an example).
+- Enums are removed as they are not typed and can cause namespace collisions. Enums are replaced with constant structs (see `status.h` for an example).
 
 C99 keywords:
 
@@ -371,7 +381,7 @@ Array *addAndSubtract(int32_t a, int32_t b) {
 
 ## Arrays
 
-- Variable length arrays are not allowed use fixed length arrays or C9's `array.h` instead
+- Variable length arrays are not allowed. Use fixed length arrays or C9's `array.h` instead
   
 ```C
 // Not allowed
@@ -442,25 +452,9 @@ arena_close(arena_name);
 
 ```
 
-- Freeing in the same scope as the allocation is mandatory.
-
-```C
-// Not allowed
-int32_t getArray() {
-  int32_t *array = malloc(10 * sizeof(int32_t));
-  return array;
-}
-int32_t *array = getArray();
-free(array);
-
-// Allowed
-int32_t *array = malloc(10 * sizeof(int32_t));
-free(array);
-```
-
 ## Preprocessor
 
-- Preprocessor is only used for includes and conditional compilation
+- Preprocessor is only used for includes and include guards
   
 ```C
 // Allowed
@@ -468,7 +462,7 @@ free(array);
 
 // Allowed
 #ifndef FILENAME_H
-  int32_t a = 0;
+...header code...
 #define FILENAME_H
 #endif
 ```
@@ -482,16 +476,6 @@ free(array);
 // Not allowed
 #define ADD(a, b) a + b
 
-```
-
-- Define macros are only allowed for include guards
-
-```C
-// Allowed
-#ifndef FILENAME_H
-...header code...
-#define FILENAME_H
-#endif
 ```
 
 Reasons:
