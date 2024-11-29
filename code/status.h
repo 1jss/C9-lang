@@ -2,7 +2,7 @@
 
 #include "types.h" // i32
 
-#if 0
+/*
 
 This header defines a struct that can be used as a namespaced enum for status codes. The struct has two fields: OK and ERROR, which are both int32_t. The values of the fields are 0 and 1, respectively.
 
@@ -19,7 +19,7 @@ int32_t my_function(void) {
 }
 ```
 
-#endif
+*/
 
 typedef struct {
   i32 OK;

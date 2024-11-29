@@ -4,7 +4,7 @@
 #include "arena.h" // Arena, arena_fill
 #include "types.h" // i32
 
-#if 0
+/*
 
 Dynamic array implementation that has the following functions:
  - array_create: initializes the array with an item size and returns a pointer to it
@@ -39,7 +39,7 @@ The tree structure grows as more items are added to the array, adding more layer
 
 The array index is stored in an arena allocator to allow for fast allocation and growth without needing to free memory on every pop or set operation. All items added to the array are copied to the array's arena, so the original data can be safely disposed of after adding it to the array.
 
-#endif
+*/
 
 const i32 DEFAULT_INDEX_WIDTH = 16;
 const i32 INVALID_ARRAY_INDEX = -1;

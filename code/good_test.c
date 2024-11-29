@@ -8,10 +8,6 @@
 #include "types.h" // i32, f32, bool
 #include "types_print.h" // print_f32, print_i32
 
-#if 0
-This is a comment
-#endif
-
 // Only use const in global scope
 const i32 MAX = 100;
 

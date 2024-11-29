@@ -6,7 +6,7 @@
 #include "status.h" // status
 #include "types.h" // u8, u32, i32
 
-#if 0
+/*
 
 This header defines a string type and helper functions for it. The string type is implemented like a simple struct, ie no pointer tricks. The creative helper functions, like copy and replace are returning new strings, not modifying the input strings. These functions also take an arena as an argument, where it allocates memory for the new string. The same arena can preferably be used for many strings and be freed all at once.
 - s8: a struct that represents a string
@@ -23,7 +23,7 @@ This header defines a string type and helper functions for it. The string type i
 - concat3_s8: a function that concatenates three s8 strings
 - replace_s8: a function that replaces all occurrences of a substring in an s8 string
 
-#endif
+*/
 
 const i32 INVALID_STRING_INDEX = -1;
 

@@ -460,15 +460,16 @@ free(array);
 
 ## Preprocessor
 
-- Preprocessor is only used for includes and conditionals
+- Preprocessor is only used for includes and conditional compilation
   
 ```C
 // Allowed
 #include <stdio.h>
 
 // Allowed
-#if 0
+#ifndef FILENAME_H
   int32_t a = 0;
+#define FILENAME_H
 #endif
 ```
 
@@ -504,20 +505,10 @@ Reasons:
 - C9 is one language, not 2 languages (C and the preprocessor)
 
 ## Comments
-- Only single line `//` comments are allowed
+- Prefer single line `//` comments
 
 ```C
 // This is a comment
-```
-
-- To comment out multiline code, use `#if 0` and `#endif`
-
-```C
-#if 0
-  // This comment is ignored
-  int32_t a = 0;
-  int32_t b = 1;
-#endif
 ```
 
 Reasons:

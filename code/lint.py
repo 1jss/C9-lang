@@ -44,10 +44,6 @@ def lint(filename):
             if re.search(r'^\s*#\s*(undef|ifdef|else|elif|error|pragma)', line):
                 print(f'{filename}:{line_num}: Warning: Found use of preprocessor directive')
 
-            # Rule: Only single line `//` comments are allowed
-            if re.search(r'/\*', line):
-                print(f'{filename}:{line_num}: Warning: Found /* comment')
-
 # Lint all files passed as arguments
 for filename in sys.argv[1:]:
     lint(filename)

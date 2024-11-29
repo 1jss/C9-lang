@@ -5,11 +5,11 @@
 #include <stdio.h> // printf
 #include "types.h" // i8, i16, i32, i64, u8, u16, u32, u64, f32, f64
 
-#if 0
+/*
 
 This header defines print functions for the types in types.h
 
-#endif
+*/
 
 void print_i8(i8 value) { printf("%" PRId8, value); }
 void print_i16(i16 value) { printf("%" PRId16, value); }

@@ -3,7 +3,7 @@
 #include <stdlib.h> // malloc, free
 #include "types.h" // u8, i32
 
-#if 0
+/*
 
 Simple arena allocator that has the following functions:
 - arena_open: initializes the arena and returns a pointer to it
@@ -17,7 +17,7 @@ The arena is implemented as a linked list of arenas, where each arena has a poin
 
 When freeing an arena it will also free all sub-arenas. This encourages the use of smaller arenas for temporary allocations and larger arenas for more permanent allocations.
 
-#endif
+*/
 
 // Set MAX_ARENA_SIZE to 1GB
 const i32 MAX_ARENA_SIZE = 1024 * 1024 * 1024;
