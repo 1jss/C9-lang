@@ -4,7 +4,7 @@ C9 is a beginner friendly subset of the C99 programing language with opinionated
 ## Purpose
 The purpose of C9 is to create a learnable, portable and readable programming language that can be compiled on existing C99 compilers. It does this by limiting the number of keywords, types and features available in the language as well as promoting a set of opinionated coding styles. The intention is to make a small (*learnable*) language that can be compiled on many different (desktop) systems (*portable*) in a standardised style that makes the code easy to understand (*readable*).
 
-*C9 is not intended to replace C99. If you already know C or come to a point where you need a keyword that is not available in C9, use C99 instead.*
+> C9 is not intended to replace C99. If you already know C or come to a point where you need a keyword that is not available in C9, use C99 instead.
 
 ## Goals
 - **Learnable**: Should be beginner friendly. Include only a very small amount of keywords.
@@ -740,6 +740,8 @@ python3 lint.py test.c
 - Format code with clang-format using the configuration file in the `code` folder.
 
 ## Compiling
+> Note that C9 is built around having only one translation unit (one .c file). This avoids the need for a build system and make the build process very simple.
+
 To compile C9 code, use the following flags:
 
 ### GCC:
@@ -747,3 +749,10 @@ To compile C9 code, use the following flags:
 
 ### Clang:
 `clang -std=c99 -Wall -Wextra test.c -o test`
+
+## Inspiration
+C9 is inspired by the following projects and people:
+
+- [MISRA C](https://misra.org.uk/misra-c/)
+- [Malcolm Ingils / C Style](https://github.com/mcinglis/c-style)
+- [Chris Wellons](https://nullprogram.com/)
