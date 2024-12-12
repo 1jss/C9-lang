@@ -161,7 +161,7 @@ Arrays are defined as follows:
 i32 array[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 ```
 
-The built in array type is fixed length. If you need a dynamic array, use the `Array` type from `array.h`.
+The built in array type is fixed length. If you need a dynamic array, use the `Array` type from `array.h` in the C9-libs repo.
 
 ## Includes
 A header file is a file that contains definitions of functions and types that can be included in other files. To include a header file from your project directory, use double quotes.
@@ -216,7 +216,7 @@ i32 *a = malloc(sizeof(i32));
 free(a);
 ```
 
-Manually allocating memory is the source of many bugs, so it is recommended to use the stack whenever possible. If you need to allocate memory on the heap, consider using the `arena.h` file in the `code` folder. This file contains functions for allocating memory on the heap in a safer way.
+Manually allocating memory is the source of many bugs, so it is recommended to use the stack whenever possible. If you need to allocate memory on the heap, consider using the arena allocator (`arena.h`) in the C9-libs repo. This file contains functions for allocating memory on the heap in a safer way.
 
 # C9 and C99 comparison
 As C9 is a subset of the C99 programing language the following part is intended for someone that already knows C99 and wants to know what is missing in C9 and why.
