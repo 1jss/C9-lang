@@ -24,7 +24,7 @@ C9 can be compiled on any existing C99 compatible compiler such as **GCC** or **
 `clang -std=c99 -Wall -Wextra main.c -o main`
 
 ## Types
-C9 is a typed language and uses the types defined in `types.h` which is included in the `code` folder. These are:
+C9 is a typed language and uses the types defined in `types.h` which can be found in the [C9-libs repo](https://github.com/1jss/C9-libs). These are:
 
 | Type    | Description             |
 | ------- | ----------------------- |
@@ -96,7 +96,7 @@ v   v   v
 i32 add(i32 a, i32 b)
 ```
 
-If a function does not return a value or takes no parameters use `void`, which is a type that represents nothing.
+If a function does not return a value or takes no parameters use `void`, which is a type that represents nothingness.
 
 ```C
 void print_hello(void) {
@@ -161,7 +161,7 @@ Arrays are defined as follows:
 i32 array[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 ```
 
-The built in array type is fixed length. If you need a dynamic array, use the `Array` type from `array.h` in the C9-libs repo.
+The built in array type is fixed length. If you need an array that can grow (dynamic array), use the `Array` type from `array.h` in the [C9-libs repo](https://github.com/1jss/C9-libs).
 
 ## Includes
 A header file is a file that contains definitions of functions and types that can be included in other files. To include a header file from your project directory, use double quotes.
@@ -182,7 +182,7 @@ When including a header file, add a comment with the functions or types that are
 #include <stdio.h> // printf
 ```
 
-Note that C9 can use any C99 compatible libraries. Note, however that libraries that are not "header only" requires a different build command.
+C9 can use any C99 compatible libraries. Note, however that libraries that are not "header only" requires a different build command.
 
 ## Pointers (references)
 A pointer is a reference to a variable's address in memory. 
@@ -198,6 +198,8 @@ i32 *a_reference = &a; // A pointer to a's address
 i32 b = *a_reference; // b is assigned a's content
 *a_reference = 20; // Assign 20 to the content of the address in a_reference
 ```
+
+In standard C99 it is common to pass variables to a function by reference (ie as a pointer) so that the function can alter the content of the variable directly. In C9 we prefer to instead pass variables by value and return the new value from the function.
 
 ## Memory management
 Variables can be stored either on "the stack" or "the heap". The stack is a region of memory that is automatically used and released by the program. The heap is a region of memory that is manually used and released by the programmer.
@@ -216,10 +218,10 @@ i32 *a = malloc(sizeof(i32));
 free(a);
 ```
 
-Manually allocating memory is the source of many bugs, so it is recommended to use the stack whenever possible. If you need to allocate memory on the heap, consider using the arena allocator (`arena.h`) in the C9-libs repo. This file contains functions for allocating memory on the heap in a safer way.
+Manually allocating memory is the source of many bugs, so it is recommended to use the stack whenever possible. If you need to allocate memory on the heap, consider using the arena allocator (`arena.h`) in the [C9-libs repo](https://github.com/1jss/C9-libs). This file contains functions for allocating memory on the heap in a safer way.
 
 # C9 and C99 comparison
-As C9 is a subset of the C99 programing language the following part is intended for someone that already knows C99 and wants to know what is missing in C9 and why.
+As C9 is a subset of the C99 programing language the following part is intended for someone that already knows C99 and wants to know what is missing in C9 and why. If language subsets are new to you, take a few minutes to read about MISRA C, which C9 has taken inspiration from.
 
 ## Keywords
 All C99 keywords are reserved in C9, but many are not allowed.
@@ -740,7 +742,7 @@ python3 lint.py test.c
 - Format code with clang-format using the configuration file in the `code` folder.
 
 ## Compiling
-> Note that C9 is built around having only one translation unit (one .c file). This avoids the need for a build system and make the build process very simple.
+> Note that C9 is built around having only one .c file in the compile command. This avoids the need for a build system and makes the build process very simple. To read more about this approach, search for the terms "jumbo build", "unity build" or "single translation unit".
 
 To compile C9 code, use the following flags:
 
