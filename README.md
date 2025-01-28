@@ -21,7 +21,7 @@ C9 can be compiled on any existing C99 compatible compiler such as **GCC** or **
 `gcc -std=c99 -Wall -Wextra -Werror -O2 -std=c99 -pedantic main.c -o main`
 
 ### Clang:
-`clang -std=c99 -Wall -Wextra main.c -o main`
+`clang -std=c99 -Wall -Wextra -O2 main.c -o main`
 
 ## Types
 C9 is a typed language and uses the types defined in `types.h` which can be found in the [C9-libs repo](https://github.com/1jss/C9-libs). These are:
@@ -230,44 +230,46 @@ ANSI C keywords:
 
 |              |              |              |            |
 | ------------ | ------------ | ------------ | ---------- |
-| ~~auto~~     | ~~break~~  | ~~case~~     | ~~char~~   |
+| ~~auto~~     | ~~break~~    | ~~case~~     | ~~char~~   |
 | _const_      | ~~continue~~ | ~~default~~  | ~~do~~     |
-| double       | else         | ~~enum~~     | ~~extern~~ |
-| float        | for          | ~~goto~~     | if         |
+| _double_     | else         | ~~enum~~     | ~~extern~~ |
+| _float_      | for          | ~~goto~~     | if         |
 | ~~int~~      | ~~long~~     | ~~register~~ | return     |
-| ~~short~~    | ~~signed~~   | sizeof       | static     |
+| ~~short~~    | ~~signed~~   | sizeof       | _static_   |
 | struct       | ~~switch~~   | typedef      | union      |
 | ~~unsigned~~ | void         | ~~volatile~~ | while      |
 
 Some keywords are only allowed in specific contexts:
-- `const` is not allowed in local scope (inside functions)
+- `const` and `static` are only allowed in global scope (not inside functions)
+- Prefer using `f32`and `f64` from `types.h` instead of `float` and `double`
 
 Reasons:
 - Several keywords are removed as they are connected to discouraged or uncommon programming patterns (auto, continue, do, extern, goto, register, volatile). If you need any of these, you are not the target audience for C9. Use the full C99 instead.
 - Keywords connected to integer types of different sizes (char, int, long, short, signed, unsigned) are removed as they can vary between systems. Use `inttypes.h` or C9's `types.h` instead. (Following the MISRA C recommendation)
 - Switch case statements are removed as they are a common source of errors (fallthrough), require 4 keywords (switch, case, break, default) and can only handle matches of int and char. Use if else statements instead.
 - Enums are removed as they are not typed and can cause namespace collisions. Enums are replaced with constant structs (see `status.h` for an example).
+- Since C9 prefers single compilation units, static is for the most part not needed.
 
 C99 keywords:
 
-|            |              | 
-| ---------- | ------------ | 
-| ~~inline~~ | ~~restrict~~ |
-| _Bool      |  _Complex    |
-| _Imaginary |              |
+|                |              | 
+| -------------- | ------------ | 
+| ~~inline~~     | ~~restrict~~ |
+| _Bool          | ~~_Complex~~ |
+| ~~_Imaginary~~ |              |
 
 C9 is guaranteed to be C99 compliant, but any keywords from newer C standards are also reserved and not allowed.
 
 This leaves the following keywords available in C9:
 
-|         |          |            |          |
-| ------- | -------- | ---------- | -------- |
-| _const_ | double   | else       | float    |
-| for     | if       | return     | sizeof   |
-| static  | struct   | typedef    | union    |
-| void    | while    |            |          |
+|           |          |            |          |
+| --------- | -------- | ---------- | -------- |
+| _const_   | _double_ | else       | _float_  |
+| for       | if       | return     | sizeof   |
+| _static_  | struct   | typedef    | union    |
+| void      | while    |            |          |
 
-_Bool, _Complex, _Imaginary
+_Bool is not used directly, only via `bool` from `stdbool.h`.
 
 ## Types
 
@@ -750,7 +752,7 @@ To compile C9 code, use the following flags:
 `gcc -std=c99 -Wall -Wextra -Werror -O2 -std=c99 -pedantic test.c -o test`
 
 ### Clang:
-`clang -std=c99 -Wall -Wextra test.c -o test`
+`clang -std=c99 -Wall -Wextra -O2 test.c -o test`
 
 ## Inspiration
 C9 is inspired by the following projects and people:
